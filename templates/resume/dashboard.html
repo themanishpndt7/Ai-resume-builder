@@ -316,10 +316,10 @@
                     {% if projects %}
                         {% for project in projects|slice:":2" %}
                             <div class="timeline-item">
-                                <h6 class="mb-1">{{ project.name }}</h6>
+                                <h6 class="mb-1">{{ project.title }}</h6>
                                 <p class="mb-1 text-muted">{{ project.description|truncatewords:15 }}</p>
-                                {% if project.url %}
-                                    <a href="{{ project.url }}" target="_blank" class="text-decoration-none">
+                                {% if project.project_url %}
+                                    <a href="{{ project.project_url }}" target="_blank" class="text-decoration-none">
                                         <small><i class="bi bi-link-45deg"></i> View Project</small>
                                     </a>
                                 {% endif %}

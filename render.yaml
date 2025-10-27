@@ -1,0 +1,22 @@
+databases:
+  - name: ai_resume_builder_db
+    databaseName: ai_resume_builder_db
+    user: ai_resume_builder_user
+
+services:
+  - type: web
+    name: ai-resume-builder
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn core.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai_resume_builder_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False

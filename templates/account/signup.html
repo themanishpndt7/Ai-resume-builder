@@ -71,10 +71,33 @@
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <strong>
+                                    {% if message.tags == 'success' %}
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    {% elif message.tags == 'error' %}
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-info-circle-fill"></i>
+                                    {% endif %}
+                                </strong>
                                 {{ message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         {% endfor %}
+                    {% endif %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong><i class="bi bi-exclamation-triangle-fill"></i> Please correct the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ field|capfirst }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
                     {% endif %}
                     
                     <form method="post" action="{% url 'account_signup' %}" id="signupForm" novalidate>
@@ -362,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const strengthIndicator = document.querySelector('.password-strength');
     const progressBar = document.querySelector('.password-strength .progress-bar');
     const strengthText = document.querySelector('.strength-text');
+    let formSubmitted = false;
     
     // Password strength checker
     function checkPasswordStrength(password) {
@@ -438,8 +462,8 @@ document.addEventListener('DOMContentLoaded', function() {
             strengthIndicator.style.display = 'none';
         }
         
-        // Check password match
-        if (password2.value) {
+        // Check password match only if form was submitted
+        if (formSubmitted && password2.value) {
             checkPasswordMatch();
         }
     });
@@ -456,7 +480,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    password2.addEventListener('input', checkPasswordMatch);
+    password2.addEventListener('input', function() {
+        // Only check match if form was submitted
+        if (formSubmitted) {
+            checkPasswordMatch();
+        }
+    });
     
     // Password toggle functionality
     document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
@@ -477,9 +506,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Form validation
+    // Form validation on submit
     form.addEventListener('submit', function(event) {
+        formSubmitted = true;
         let isValid = true;
+        let errorMessages = [];
         
         // Check all required fields
         const requiredFields = form.querySelectorAll('[required]');
@@ -487,9 +518,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
                 isValid = false;
+                
+                // Get field label
+                const label = form.querySelector(`label[for="${field.id}"]`);
+                if (label) {
+                    const fieldName = label.textContent.replace('*', '').trim();
+                    errorMessages.push(`${fieldName} is required`);
+                }
             } else {
                 field.classList.remove('is-invalid');
-                field.classList.add('is-valid');
             }
         });
         
@@ -499,23 +536,32 @@ document.addEventListener('DOMContentLoaded', function() {
         if (emailField.value && !emailPattern.test(emailField.value)) {
             emailField.classList.add('is-invalid');
             isValid = false;
+            errorMessages.push('Please enter a valid email address');
         }
         
         // Check password length
         if (password1.value && password1.value.length < 8) {
             password1.classList.add('is-invalid');
             isValid = false;
+            errorMessages.push('Password must be at least 8 characters long');
         }
         
         // Check password match
         if (password1.value !== password2.value) {
             password2.classList.add('is-invalid');
             isValid = false;
+            errorMessages.push('Passwords do not match');
         }
         
         if (!isValid) {
             event.preventDefault();
             event.stopPropagation();
+            
+            // Show error alert
+            if (errorMessages.length > 0) {
+                const uniqueErrors = [...new Set(errorMessages)];
+                alert('⚠️ Please fix the following errors:\n\n' + uniqueErrors.join('\n'));
+            }
             
             // Scroll to first error
             const firstError = form.querySelector('.is-invalid');
@@ -528,19 +574,10 @@ document.addEventListener('DOMContentLoaded', function() {
         form.classList.add('was-validated');
     });
     
-    // Real-time validation
+    // Remove validation styling when user fixes the field
     form.querySelectorAll('input').forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.hasAttribute('required') && !this.value.trim()) {
-                this.classList.add('is-invalid');
-            } else if (this.value.trim()) {
-                this.classList.remove('is-invalid');
-                this.classList.add('is-valid');
-            }
-        });
-        
         input.addEventListener('input', function() {
-            if (this.classList.contains('is-invalid') && this.value.trim()) {
+            if (formSubmitted && this.classList.contains('is-invalid') && this.value.trim()) {
                 this.classList.remove('is-invalid');
             }
         });

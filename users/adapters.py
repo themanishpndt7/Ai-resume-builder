@@ -2,6 +2,9 @@
 Custom allauth adapter to disable default password reset.
 """
 from allauth.account.adapter import DefaultAccountAdapter
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -21,3 +24,29 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         
         # Allow other emails (verification, etc.)
         super().send_mail(template_prefix, email, context)
+    
+    def get_login_redirect_url(self, request):
+        """
+        Redirect to dashboard after login.
+        """
+        return reverse('dashboard')
+    
+    def get_signup_redirect_url(self, request):
+        """
+        Redirect to login page after successful signup with success message.
+        """
+        messages.success(
+            request,
+            '🎉 Account created successfully! Please login with your credentials.'
+        )
+        return reverse('account_login')
+    
+    def add_message(self, request, level, message_tag, message, extra_tags='', fail_silently=False):
+        """
+        Override to customize success messages for signup.
+        """
+        # Customize the signup success message
+        if 'successfully signed in' in message.lower():
+            message = '✅ Welcome! You have successfully logged in.'
+        
+        super().add_message(request, level, message_tag, message, extra_tags, fail_silently)

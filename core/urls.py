@@ -11,9 +11,13 @@ from resume.password_reset_views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView
 )
+from resume.email_check_view import check_email_config
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Email configuration check (for debugging)
+    path('check-email-config/', check_email_config, name='check_email_config'),
     
     # Custom OTP-based password reset (must be before allauth)
     path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='account_reset_password'),

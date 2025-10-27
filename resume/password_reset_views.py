@@ -112,19 +112,40 @@ Best regards,
 AI Resume Builder Team
                 '''
                 
-                send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                )
-                
-                messages.success(request, f'OTP has been sent to {email}. Please check your inbox.')
-                return redirect('password_reset_verify_otp')
+                try:
+                    # Attempt to send email
+                    send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [email],
+                        fail_silently=False,
+                    )
+                    print(f"✅ OTP email sent successfully to {email}")
+                    messages.success(request, f'OTP has been sent to {email}. Please check your inbox (including spam folder).')
+                    return redirect('password_reset_verify_otp')
+                    
+                except Exception as e:
+                    # Log the error and show user-friendly message
+                    print(f"❌ Failed to send OTP email to {email}")
+                    print(f"Error: {str(e)}")
+                    print(f"Email Backend: {settings.EMAIL_BACKEND}")
+                    print(f"Email Host User: {settings.EMAIL_HOST_USER if settings.EMAIL_HOST_USER else 'NOT SET'}")
+                    
+                    messages.error(
+                        request, 
+                        'Failed to send OTP email. Please contact support or try again later. '
+                        'Error: Email service is not properly configured.'
+                    )
+                    return render(request, self.template_name, {'form': form})
                 
             except CustomUser.DoesNotExist:
                 messages.error(request, 'No account found with this email address.')
+                return render(request, self.template_name, {'form': form})
+            except Exception as e:
+                # Catch any other unexpected errors
+                print(f"❌ Unexpected error in password reset: {str(e)}")
+                messages.error(request, 'An unexpected error occurred. Please try again.')
                 return render(request, self.template_name, {'form': form})
         
         return render(request, self.template_name, {'form': form})

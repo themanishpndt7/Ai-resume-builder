@@ -31,7 +31,13 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pu3b0yc&ibluwssn3k)x9l2h5!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost,0.0.0.0').split(',')
+# Parse ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')]
+
+# Add Render.com domain if present
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # CSRF trusted origins for proxy access
 CSRF_TRUSTED_ORIGINS = [

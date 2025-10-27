@@ -20,7 +20,7 @@ urlpatterns = [
     path('check-email-config/', check_email_config, name='check_email_config'),
     
     # Custom OTP-based password reset (must be before allauth)
-    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='account_reset_password'),
+    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),
     path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),

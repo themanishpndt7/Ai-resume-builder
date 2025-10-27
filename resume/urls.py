@@ -3,12 +3,6 @@ URL configuration for resume app.
 """
 from django.urls import path
 from . import views
-from .password_reset_views import (
-    PasswordResetRequestView,
-    PasswordResetVerifyOTPView,
-    PasswordResetConfirmView,
-    PasswordResetCompleteView
-)
 from .diagnostic_views import config_check, test_email_quick
 
 urlpatterns = [
@@ -16,14 +10,7 @@ urlpatterns = [
     path('api/config-check/', config_check, name='config_check'),
     path('api/test-email/', test_email_quick, name='test_email_quick'),
     
-    # Password Reset (OTP-based)
-    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
-    path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),
-    path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    
-    # Backward compatibility aliases
-    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset'),
+    # Password Reset URLs are in core/urls.py (not here to avoid conflicts)
     
     # Home and Dashboard
     path('', views.home, name='home'),

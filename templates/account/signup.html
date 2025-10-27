@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign Up - AI Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header text-center bg-success text-white">
+                    <h3 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-center text-muted mb-4">Join us and start building your professional resume!</p>
+                    
+                    <form method="post" action="{% url 'account_signup' %}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-person-plus"></i> Sign Up
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <p class="text-center mb-0">
+                        Already have an account? 
+                        <a href="{% url 'account_login' %}" class="fw-bold">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Ensure form labels and text are visible */
+.card-body label,
+.card-body .form-label,
+.card-body .form-text,
+.card-body small {
+    color: #212529 !important;
+}
+
+.card-body input,
+.card-body select,
+.card-body textarea {
+    color: #212529 !important;
+    background-color: #ffffff !important;
+}
+
+.card-body input::placeholder {
+    color: #6c757d !important;
+}
+
+/* Dark theme adjustments */
+[data-bs-theme="dark"] .card-body label,
+[data-bs-theme="dark"] .card-body .form-label,
+[data-bs-theme="dark"] .card-body .form-text,
+[data-bs-theme="dark"] .card-body small {
+    color: #212529 !important;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #ffffff !important;
+}
+
+/* Password toggle styles */
+.password-toggle-wrapper {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #6c757d;
+    z-index: 10;
+}
+
+.password-toggle-btn:hover {
+    color: #495057;
+}
+
+.password-toggle-btn:focus {
+    outline: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Find all password fields
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+    
+    passwordFields.forEach(function(passwordField) {
+        // Create wrapper div
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-toggle-wrapper';
+        
+        // Wrap the password field
+        passwordField.parentNode.insertBefore(wrapper, passwordField);
+        wrapper.appendChild(passwordField);
+        
+        // Create toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'password-toggle-btn';
+        toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
+        toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
+        
+        // Add toggle button after password field
+        wrapper.appendChild(toggleBtn);
+        
+        // Add padding to password field to prevent text overlap with icon
+        passwordField.style.paddingRight = '45px';
+        
+        // Toggle password visibility
+        toggleBtn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

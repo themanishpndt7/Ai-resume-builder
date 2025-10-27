@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - AI Resume & Portfolio Builder{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>AI Resume, Cover Letter & Portfolio Builder</h1>
+        <p class="lead">Transform Your Skills into Opportunities</p>
+        <div class="hero-description mt-3 mb-4">
+            <p class="text-white-75">
+                Many students struggle to present their skills and projects in an attractive, professional format. 
+                Generic resume templates don't highlight individual strengths. Our generative AI solution automatically 
+                creates tailored <strong>resumes, cover letters, and portfolios</strong> based on your unique data—improving your job 
+                and internship opportunities.
+            </p>
+        </div>
+        <div class="mt-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn btn-light btn-lg me-2">
+                    <i class="bi bi-speedometer2"></i> Go to Dashboard
+                </a>
+                <a href="{% url 'generate_resume' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-magic"></i> Generate Resume
+                </a>
+            {% else %}
+                <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg me-2">
+                    <i class="bi bi-person-plus"></i> Get Started Free
+                </a>
+                <a href="{% url 'account_login' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">The Solution to Generic Resumes</h2>
+            <p class="lead text-muted">AI-powered tools that highlight YOUR individual strengths</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <h4>Tailored for You</h4>
+                        <p class="text-muted">
+                            Unlike generic templates, our AI analyzes your unique skills and projects to create personalized resumes that showcase YOUR individual strengths and achievements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-palette"></i>
+                        </div>
+                        <h4>Professional Format</h4>
+                        <p class="text-muted">
+                            Present your skills and projects in an attractive, professional format that recruiters love—no more struggling with formatting and layout.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-file-earmark-pdf"></i>
+                        </div>
+                        <h4>PDF Export</h4>
+                        <p class="text-muted">
+                            Download your resume and portfolio as high-quality PDF files, ready to send to employers or upload to job portals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <h4>Complete Portfolio</h4>
+                        <p class="text-muted">
+                            Build stunning portfolios alongside your resume—showcase all your projects and skills in one place to maximize internship and job opportunities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-envelope-paper"></i>
+                        </div>
+                        <h4>AI Cover Letters</h4>
+                        <p class="text-muted">
+                            Generate personalized cover letters tailored to specific jobs and companies—stand out from other applicants with compelling, customized applications.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h4>Secure & Private</h4>
+                        <p class="text-muted">
+                            Your data is encrypted and secure. We never share your information with third parties without your consent.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card feature-card hover-lift">
+                    <div class="card-body">
+                        <div class="feature-icon">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        <h4>Smart Matching</h4>
+                        <p class="text-muted">
+                            Our AI analyzes job descriptions and matches your skills to create the most relevant applications for better interview opportunities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-muted">Get started in just 3 simple steps</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-1 fw-bold">1</span>
+                    </div>
+                </div>
+                <h4>Create Your Profile</h4>
+                <p class="text-muted">Sign up and fill in your personal information, education, experience, and projects.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-1 fw-bold">2</span>
+                    </div>
+                </div>
+                <h4>Generate with AI</h4>
+                <p class="text-muted">Let our AI analyze your data and create a professional, personalized resume for you.</p>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="mb-3">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-1 fw-bold">3</span>
+                    </div>
+                </div>
+                <h4>Download & Share</h4>
+                <p class="text-muted">Download your resume as PDF and start applying to your dream jobs!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-3">Stop Struggling with Generic Templates</h2>
+        <p class="lead mb-4">Join students who are landing more interviews with AI-powered resumes that highlight their unique strengths</p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-person-plus"></i> Start Building Your Resume - Free!
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,71 @@
+"""
+URL configuration for resume app.
+"""
+from django.urls import path
+from . import views
+from .password_reset_views import (
+    PasswordResetRequestView,
+    PasswordResetVerifyOTPView,
+    PasswordResetConfirmView,
+    PasswordResetCompleteView
+)
+
+urlpatterns = [
+    # Password Reset (OTP-based)
+    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
+    path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),
+    path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    
+    # Backward compatibility aliases
+    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset'),
+    
+    # Home and Dashboard
+    path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
+    # Profile
+    path('profile/edit/', views.profile_edit, name='profile_edit'),
+    
+    # Education
+    path('education/', views.education_list, name='education_list'),
+    path('education/add/', views.education_add, name='education_add'),
+    path('education/<int:pk>/edit/', views.education_edit, name='education_edit'),
+    path('education/<int:pk>/delete/', views.education_delete, name='education_delete'),
+    
+    # Experience
+    path('experience/', views.experience_list, name='experience_list'),
+    path('experience/add/', views.experience_add, name='experience_add'),
+    path('experience/<int:pk>/edit/', views.experience_edit, name='experience_edit'),
+    path('experience/<int:pk>/delete/', views.experience_delete, name='experience_delete'),
+    
+    # Projects
+    path('projects/', views.project_list, name='project_list'),
+    path('projects/add/', views.project_add, name='project_add'),
+    path('projects/<int:pk>/edit/', views.project_edit, name='project_edit'),
+    path('projects/<int:pk>/delete/', views.project_delete, name='project_delete'),
+    
+    # Resume Generation
+    path('generate/', views.generate_resume, name='generate_resume'),
+    path('resumes/', views.resume_list, name='resume_list'),
+    path('resumes/<int:pk>/', views.resume_view, name='resume_view'),
+    path('resumes/<int:pk>/download/', views.resume_download_pdf, name='resume_download_pdf'),
+    path('resumes/<int:pk>/delete/', views.resume_delete, name='resume_delete'),
+    
+    # Templates Gallery
+    path('templates/', views.templates_gallery, name='templates_gallery'),
+    
+    # Cover Letters
+    path('cover-letters/generate/', views.generate_cover_letter, name='generate_cover_letter'),
+    path('cover-letters/', views.cover_letter_list, name='cover_letter_list'),
+    path('cover-letters/<int:pk>/', views.cover_letter_view, name='cover_letter_view'),
+    path('cover-letters/<int:pk>/download/', views.cover_letter_download_pdf, name='cover_letter_download_pdf'),
+    path('cover-letters/<int:pk>/delete/', views.cover_letter_delete, name='cover_letter_delete'),
+    
+    # Portfolio
+    path('portfolio/', views.portfolio_view, name='portfolio_view'),
+    path('portfolio/download/', views.portfolio_download_pdf, name='portfolio_download_pdf'),
+    
+    # Theme
+    path('set-theme/', views.set_theme, name='set_theme'),
+]

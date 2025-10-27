@@ -1,0 +1,90 @@
+<!-- TEXT VISIBILITY DIAGNOSTIC - Add to HTML to test -->
+<!-- Add this to templates/base.html temporarily to identify issues -->
+
+<script>
+// Diagnostic script to find invisible text
+console.log("🔍 TEXT VISIBILITY DIAGNOSTIC");
+console.log("=" .repeat(50));
+
+// Check if theme is loaded
+console.log("Theme Manager Status:");
+console.log("Current Theme:", window.themeManager ? window.themeManager.getCurrentTheme() : "NOT LOADED");
+
+// Get all text elements and check their colors
+function checkTextVisibility() {
+  const issues = [];
+  const allElements = document.querySelectorAll('*');
+  
+  allElements.forEach(el => {
+    if (el.children.length === 0 && el.textContent.trim().length > 0) {
+      const style = window.getComputedStyle(el);
+      const color = style.color;
+      const bgColor = style.backgroundColor;
+      
+      // Parse RGB values
+      const textRGB = color.match(/\d+/g);
+      const bgRGB = bgColor.match(/\d+/g);
+      
+      if (textRGB && bgRGB && textRGB.length >= 3 && bgRGB.length >= 3) {
+        // Simple luminance calculation
+        const textLuminance = (textRGB[0] * 0.299 + textRGB[1] * 0.587 + textRGB[2] * 0.114) / 255;
+        const bgLuminance = (bgRGB[0] * 0.299 + bgRGB[1] * 0.587 + bgRGB[2] * 0.114) / 255;
+        const contrast = Math.abs(textLuminance - bgLuminance);
+        
+        // Flag low contrast (less than 0.2)
+        if (contrast < 0.2) {
+          issues.push({
+            element: el.tagName,
+            text: el.textContent.substring(0, 50),
+            color: color,
+            bgColor: bgColor,
+            contrast: contrast.toFixed(2),
+            class: el.className
+          });
+        }
+      }
+    }
+  });
+  
+  return issues;
+}
+
+const problems = checkTextVisibility();
+console.log(`\nFound ${problems.length} potential visibility issues:`);
+problems.forEach((issue, i) => {
+  console.log(`\n[${i+1}] ${issue.element}`);
+  console.log(`    Text: "${issue.text}..."`);
+  console.log(`    Text Color: ${issue.color}`);
+  console.log(`    Background: ${issue.bgColor}`);
+  console.log(`    Contrast: ${issue.contrast}`);
+  console.log(`    Class: ${issue.class}`);
+});
+
+// Check theme variables
+console.log("\n" + "=".repeat(50));
+console.log("CSS Variables Check:");
+const root = document.documentElement;
+const computedStyle = getComputedStyle(root);
+console.log("--color-text-primary:", computedStyle.getPropertyValue('--color-text-primary').trim());
+console.log("--color-text-secondary:", computedStyle.getPropertyValue('--color-text-secondary').trim());
+console.log("--color-bg-primary:", computedStyle.getPropertyValue('--color-bg-primary').trim());
+console.log("--color-bg-secondary:", computedStyle.getPropertyValue('--color-bg-secondary').trim());
+
+// Check if dark-mode class is applied
+console.log("\nDark Mode Status:");
+console.log("Has .dark-mode class:", document.documentElement.classList.contains('dark-mode'));
+console.log("HTML classes:", document.documentElement.className);
+</script>
+
+<!-- WHAT TO LOOK FOR -->
+<!-- Run in browser console and check for: -->
+<!-- 1. Any elements with text color and background color too similar -->
+<!-- 2. Placeholder text in forms -->
+<!-- 3. Disabled form inputs -->
+<!-- 4. Labels associated with inputs -->
+<!-- 5. Navbar text in light mode -->
+<!-- 6. Footer text -->
+<!-- 7. Helper/hint text -->
+<!-- 8. Dropdown items -->
+<!-- 9. Modal text -->
+<!-- 10. Badge/label text -->

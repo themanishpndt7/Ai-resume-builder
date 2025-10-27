@@ -12,3 +12,6 @@ echo "Running database migrations..."
 python manage.py migrate --noinput
 
 echo "Build complete!"
+
+# Set environment variable for gunicorn timeout
+export GUNICORN_CMD_ARGS="--timeout 120 --workers 2"

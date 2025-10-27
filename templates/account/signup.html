@@ -5,22 +5,179 @@
 
 {% block content %}
 <div class="container my-5">
-    <div class="row">
-        <div class="col-lg-6 mx-auto">
-            <div class="card">
-                <div class="card-header text-center bg-success text-white">
-                    <h3 class="mb-0"><i class="bi bi-person-plus"></i> Create Account</h3>
-                </div>
-                <div class="card-body">
-                    <p class="text-center text-muted mb-4">Join us and start building your professional resume!</p>
+    <div class="row align-items-center">
+        <!-- Left Side - Features -->
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="signup-features">
+                <h1 class="display-5 fw-bold mb-4">
+                    <i class="bi bi-stars text-warning"></i> Welcome to AI Resume Builder
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Create professional resumes in minutes with AI-powered tools
+                </p>
+                
+                <div class="feature-list">
+                    <div class="feature-item d-flex align-items-start mb-3">
+                        <div class="feature-icon me-3">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">AI-Powered Resume Generation</h5>
+                            <p class="text-muted mb-0">Create tailored resumes with intelligent suggestions</p>
+                        </div>
+                    </div>
                     
-                    <form method="post" action="{% url 'account_signup' %}">
+                    <div class="feature-item d-flex align-items-start mb-3">
+                        <div class="feature-icon me-3">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Professional Templates</h5>
+                            <p class="text-muted mb-0">Choose from multiple ATS-friendly templates</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item d-flex align-items-start mb-3">
+                        <div class="feature-icon me-3">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Cover Letter Generator</h5>
+                            <p class="text-muted mb-0">Generate compelling cover letters instantly</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item d-flex align-items-start mb-3">
+                        <div class="feature-icon me-3">
+                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Export to PDF</h5>
+                            <p class="text-muted mb-0">Download your resume in high-quality PDF format</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Side - Signup Form -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-center bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0"><i class="bi bi-person-plus-fill"></i> Create Your Account</h3>
+                    <p class="mb-0 mt-2 small">Start building your professional future today</p>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="post" action="{% url 'account_signup' %}" id="signupForm" novalidate>
                         {% csrf_token %}
-                        {{ form|crispy }}
                         
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="bi bi-person-plus"></i> Sign Up
+                        <!-- First Name -->
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">
+                                <i class="bi bi-person"></i> First Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="first_name" class="form-control form-control-lg" 
+                                   id="id_first_name" placeholder="Enter your first name" 
+                                   value="{{ form.first_name.value|default:'' }}" required>
+                            <div class="invalid-feedback">Please enter your first name.</div>
+                        </div>
+                        
+                        <!-- Last Name -->
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">
+                                <i class="bi bi-person"></i> Last Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" name="last_name" class="form-control form-control-lg" 
+                                   id="id_last_name" placeholder="Enter your last name" 
+                                   value="{{ form.last_name.value|default:'' }}" required>
+                            <div class="invalid-feedback">Please enter your last name.</div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">
+                                <i class="bi bi-envelope"></i> Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" name="email" class="form-control form-control-lg" 
+                                   id="id_email" placeholder="your.email@example.com" 
+                                   value="{{ form.email.value|default:'' }}" required>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">
+                                <i class="bi bi-lock"></i> Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="password-wrapper position-relative">
+                                <input type="password" name="password1" class="form-control form-control-lg" 
+                                       id="id_password1" placeholder="Create a strong password" required>
+                                <button type="button" class="password-toggle-btn position-absolute" tabindex="-1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">Password must be at least 8 characters long.</div>
+                            
+                            <!-- Password Strength Indicator -->
+                            <div class="password-strength mt-2" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Password Strength:</small>
+                                    <small class="strength-text fw-bold"></small>
+                                </div>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <ul class="password-requirements mt-2 small text-muted mb-0">
+                                    <li id="req-length"><i class="bi bi-x-circle text-danger"></i> At least 8 characters</li>
+                                    <li id="req-uppercase"><i class="bi bi-x-circle text-danger"></i> One uppercase letter</li>
+                                    <li id="req-lowercase"><i class="bi bi-x-circle text-danger"></i> One lowercase letter</li>
+                                    <li id="req-number"><i class="bi bi-x-circle text-danger"></i> One number</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">
+                                <i class="bi bi-lock-fill"></i> Confirm Password <span class="text-danger">*</span>
+                            </label>
+                            <div class="password-wrapper position-relative">
+                                <input type="password" name="password2" class="form-control form-control-lg" 
+                                       id="id_password2" placeholder="Re-enter your password" required>
+                                <button type="button" class="password-toggle-btn position-absolute" tabindex="-1">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" id="password-match-feedback">Passwords do not match.</div>
+                        </div>
+                        
+                        <!-- Terms & Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
+                                    and <a href="#" class="text-decoration-none">Privacy Policy</a> <span class="text-danger">*</span>
+                                </label>
+                                <div class="invalid-feedback">You must agree before submitting.</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-lg text-white" 
+                                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-person-plus-fill"></i> Create Account
                             </button>
                         </div>
                     </form>
@@ -29,7 +186,8 @@
                     
                     <p class="text-center mb-0">
                         Already have an account? 
-                        <a href="{% url 'account_login' %}" class="fw-bold">Login</a>
+                        <a href="{% url 'account_login' %}" class="fw-bold text-decoration-none" 
+                           style="color: #667eea;">Login here</a>
                     </p>
                 </div>
             </div>
@@ -38,57 +196,58 @@
 </div>
 
 <style>
-/* Ensure form labels and text are visible */
-.card-body label,
-.card-body .form-label,
-.card-body .form-text,
-.card-body small {
-    color: #212529 !important;
+/* Card styling */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
 }
 
-.card-body input,
-.card-body select,
-.card-body textarea {
+.card-header {
+    border-bottom: none;
+}
+
+/* Form styling */
+.form-control, .form-select {
     color: #212529 !important;
     background-color: #ffffff !important;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-.card-body input::placeholder {
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.form-label {
+    color: #212529 !important;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
     color: #6c757d !important;
+    font-size: 0.875rem;
 }
 
-/* Dark theme adjustments */
-[data-bs-theme="dark"] .card-body label,
-[data-bs-theme="dark"] .card-body .form-label,
-[data-bs-theme="dark"] .card-body .form-text,
-[data-bs-theme="dark"] .card-body small {
-    color: #212529 !important;
-}
-
-[data-bs-theme="dark"] .card {
-    background-color: #ffffff !important;
-}
-
-[data-bs-theme="dark"] .card-body {
-    background-color: #ffffff !important;
-}
-
-/* Password toggle styles */
-.password-toggle-wrapper {
+/* Password toggle button */
+.password-wrapper {
     position: relative;
 }
 
 .password-toggle-btn {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 5px;
     color: #6c757d;
     z-index: 10;
+    transition: color 0.2s;
 }
 
 .password-toggle-btn:hover {
@@ -98,47 +257,291 @@
 .password-toggle-btn:focus {
     outline: none;
 }
+
+.password-wrapper input {
+    padding-right: 45px;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-text {
+    font-size: 0.875rem;
+}
+
+.password-requirements {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 8px;
+}
+
+.password-requirements li {
+    padding: 2px 0;
+    transition: color 0.3s;
+}
+
+.password-requirements li i {
+    margin-right: 5px;
+}
+
+/* Feature list styling */
+.signup-features {
+    padding: 2rem;
+}
+
+.feature-item {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-icon {
+    flex-shrink: 0;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark theme adjustments */
+[data-bs-theme="dark"] .card {
+    background-color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    color: #212529 !important;
+    background-color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .form-label,
+[data-bs-theme="dark"] .form-text {
+    color: #212529 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .signup-features {
+        padding: 1rem 0;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Find all password fields
-    const passwordFields = document.querySelectorAll('input[type="password"]');
+    const form = document.getElementById('signupForm');
+    const password1 = document.getElementById('id_password1');
+    const password2 = document.getElementById('id_password2');
+    const strengthIndicator = document.querySelector('.password-strength');
+    const progressBar = document.querySelector('.password-strength .progress-bar');
+    const strengthText = document.querySelector('.strength-text');
     
-    passwordFields.forEach(function(passwordField) {
-        // Create wrapper div
-        const wrapper = document.createElement('div');
-        wrapper.className = 'password-toggle-wrapper';
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        const requirements = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[^A-Za-z0-9]/.test(password)
+        };
         
-        // Wrap the password field
-        passwordField.parentNode.insertBefore(wrapper, passwordField);
-        wrapper.appendChild(passwordField);
+        // Update requirement indicators
+        updateRequirement('req-length', requirements.length);
+        updateRequirement('req-uppercase', requirements.uppercase);
+        updateRequirement('req-lowercase', requirements.lowercase);
+        updateRequirement('req-number', requirements.number);
         
-        // Create toggle button
-        const toggleBtn = document.createElement('button');
-        toggleBtn.type = 'button';
-        toggleBtn.className = 'password-toggle-btn';
-        toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
-        toggleBtn.setAttribute('aria-label', 'Toggle password visibility');
+        // Calculate strength
+        Object.values(requirements).forEach(met => {
+            if (met) strength++;
+        });
         
-        // Add toggle button after password field
-        wrapper.appendChild(toggleBtn);
+        // Update progress bar
+        let color, text, percentage;
         
-        // Add padding to password field to prevent text overlap with icon
-        passwordField.style.paddingRight = '45px';
+        if (strength === 0) {
+            color = '#dc3545';
+            text = 'Very Weak';
+            percentage = 0;
+        } else if (strength <= 2) {
+            color = '#dc3545';
+            text = 'Weak';
+            percentage = 25;
+        } else if (strength === 3) {
+            color = '#ffc107';
+            text = 'Fair';
+            percentage = 50;
+        } else if (strength === 4) {
+            color = '#28a745';
+            text = 'Good';
+            percentage = 75;
+        } else {
+            color = '#28a745';
+            text = 'Strong';
+            percentage = 100;
+        }
         
-        // Toggle password visibility
-        toggleBtn.addEventListener('click', function() {
+        progressBar.style.width = percentage + '%';
+        progressBar.style.backgroundColor = color;
+        strengthText.textContent = text;
+        strengthText.style.color = color;
+    }
+    
+    function updateRequirement(id, met) {
+        const element = document.getElementById(id);
+        const icon = element.querySelector('i');
+        
+        if (met) {
+            icon.className = 'bi bi-check-circle-fill text-success';
+            element.style.color = '#28a745';
+        } else {
+            icon.className = 'bi bi-x-circle text-danger';
+            element.style.color = '#6c757d';
+        }
+    }
+    
+    // Show strength indicator when user starts typing
+    password1.addEventListener('input', function() {
+        if (this.value.length > 0) {
+            strengthIndicator.style.display = 'block';
+            checkPasswordStrength(this.value);
+        } else {
+            strengthIndicator.style.display = 'none';
+        }
+        
+        // Check password match
+        if (password2.value) {
+            checkPasswordMatch();
+        }
+    });
+    
+    // Check password match
+    function checkPasswordMatch() {
+        const feedback = document.getElementById('password-match-feedback');
+        if (password2.value && password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            feedback.textContent = 'Passwords do not match.';
+        } else if (password2.value) {
+            password2.classList.remove('is-invalid');
+            password2.classList.add('is-valid');
+        }
+    }
+    
+    password2.addEventListener('input', checkPasswordMatch);
+    
+    // Password toggle functionality
+    document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const wrapper = this.parentElement;
+            const input = wrapper.querySelector('input');
             const icon = this.querySelector('i');
             
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
+            if (input.type === 'password') {
+                input.type = 'text';
                 icon.classList.remove('bi-eye');
                 icon.classList.add('bi-eye-slash');
             } else {
-                passwordField.type = 'password';
+                input.type = 'password';
                 icon.classList.remove('bi-eye-slash');
                 icon.classList.add('bi-eye');
+            }
+        });
+    });
+    
+    // Form validation
+    form.addEventListener('submit', function(event) {
+        let isValid = true;
+        
+        // Check all required fields
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
+            }
+        });
+        
+        // Check email format
+        const emailField = document.getElementById('id_email');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailField.value && !emailPattern.test(emailField.value)) {
+            emailField.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Check password length
+        if (password1.value && password1.value.length < 8) {
+            password1.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Check password match
+        if (password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Scroll to first error
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+        
+        form.classList.add('was-validated');
+    });
+    
+    // Real-time validation
+    form.querySelectorAll('input').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.hasAttribute('required') && !this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.classList.contains('is-invalid') && this.value.trim()) {
+                this.classList.remove('is-invalid');
             }
         });
     });

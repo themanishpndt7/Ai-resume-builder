@@ -27,9 +27,9 @@ Render's free tier uses **ephemeral storage** - uploaded files are deleted when 
 After logging in, you'll see your dashboard with:
 
 ```
-Cloud Name: your-cloud-name
-API Key: 123456789012345
-API Secret: AbCdEfGhIjKlMnOpQrStUvWxYz
+Cloud Name: dud3f00ay
+API Key: 764652939378289
+API Secret: gu7Rwmz8jB4I0vsI3VYZNC3Ri0Q
 ```
 
 **Important:** Keep these credentials secret!
@@ -42,12 +42,12 @@ API Secret: AbCdEfGhIjKlMnOpQrStUvWxYz
 4. Add these 3 new environment variables:
 
 ```
-CLOUDINARY_CLOUD_NAME = your-cloud-name
-CLOUDINARY_API_KEY = 123456789012345
-CLOUDINARY_API_SECRET = AbCdEfGhIjKlMnOpQrStUvWxYz
+CLOUDINARY_CLOUD_NAME = dud3f00ay
+CLOUDINARY_API_KEY = 764652939378289
+CLOUDINARY_API_SECRET = gu7Rwmz8jB4I0vsI3VYZNC3Ri0Q
 ```
 
-**Replace with your actual values from Cloudinary dashboard!**
+**Copy and paste these exact values into Render!**
 
 ### Step 4: Deploy
 

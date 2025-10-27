@@ -218,7 +218,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 # Django Allauth Settings
 SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True  # Require username at signup
+ACCOUNT_USERNAME_REQUIRED = False  # Don't require username (using email for authentication)
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Login via email
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True

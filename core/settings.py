@@ -181,6 +181,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# WhiteNoise media file serving for production
+# Note: For production, consider using cloud storage like AWS S3, Cloudinary, etc.
+# Free tier Render has ephemeral storage - files are deleted on restart
+if not DEBUG:
+    # In production, use WhiteNoise to serve media files temporarily
+    # WARNING: This is not ideal for production as files will be lost on dyno restart
+    WHITENOISE_AUTOREFRESH = True
+    WHITENOISE_USE_FINDERS = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

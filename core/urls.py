@@ -28,7 +28,10 @@ urlpatterns = [
     path('', include('resume.urls')),
 ]
 
-# Serve media files in development
+# Serve media files in both development and production
+# For production: Consider using cloud storage (AWS S3, Cloudinary, etc.) for persistent storage
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve static files only in development (WhiteNoise handles in production)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -9,8 +9,13 @@ from .password_reset_views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView
 )
+from .diagnostic_views import config_check, test_email_quick
 
 urlpatterns = [
+    # Diagnostic endpoints (for debugging production issues)
+    path('api/config-check/', config_check, name='config_check'),
+    path('api/test-email/', test_email_quick, name='test_email_quick'),
+    
     # Password Reset (OTP-based)
     path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),

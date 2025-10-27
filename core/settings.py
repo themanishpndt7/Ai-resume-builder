@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     
     # Third-party apps
+    'cloudinary_storage',
+    'cloudinary',
     'crispy_forms',
     'crispy_bootstrap5',
     'allauth',
@@ -180,6 +182,20 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Cloudinary Configuration for persistent media storage
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', ''),
+}
+
+# Use Cloudinary for media storage if credentials are provided
+if CLOUDINARY_STORAGE['CLOUD_NAME'] and CLOUDINARY_STORAGE['API_KEY']:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    print("✅ Cloudinary configured: Media files will be stored in the cloud")
+else:
+    print("⚠️  Cloudinary not configured: Using local media storage")
 
 # WhiteNoise media file serving for production
 # Note: For production, consider using cloud storage like AWS S3, Cloudinary, etc.

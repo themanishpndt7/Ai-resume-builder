@@ -166,6 +166,33 @@ class ExperienceForm(forms.ModelForm):
     """
     Form for adding and editing work experience entries.
     """
+    city = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'City'
+        })
+    )
+    state = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'State/Province',
+            'id': 'id_experience_state'
+        })
+    )
+    country = forms.ChoiceField(
+        choices=COUNTRIES,
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-select',
+            'id': 'id_experience_country',
+            'onchange': 'updateExperienceStates()'
+        })
+    )
+    
     class Meta:
         model = Experience
         fields = ['company', 'position', 'employment_type', 'location', 
@@ -190,10 +217,7 @@ class ExperienceForm(forms.ModelForm):
                 'placeholder': 'Job Title'
             }),
             'employment_type': forms.Select(attrs={'class': 'form-select'}),
-            'location': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'City, Country'
-            }),
+            'location': forms.HiddenInput(),  # Hidden, will be populated from city + state + country
             'start_date': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
@@ -209,6 +233,47 @@ class ExperienceForm(forms.ModelForm):
                 'placeholder': 'Describe your responsibilities and achievements...'
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Split location into city, state, and country if it exists
+        if self.instance and self.instance.location:
+            # Try to parse "City, State, Country" or "City, Country"
+            location_parts = [part.strip() for part in self.instance.location.split(',')]
+            if len(location_parts) == 3:
+                self.initial['city'] = location_parts[0]
+                self.initial['state'] = location_parts[1]
+                self.initial['country'] = location_parts[2]
+            elif len(location_parts) == 2:
+                self.initial['city'] = location_parts[0]
+                # Check if second part is a country or state
+                if location_parts[1] in [c[0] for c in COUNTRIES]:
+                    self.initial['country'] = location_parts[1]
+                else:
+                    self.initial['state'] = location_parts[1]
+            else:
+                self.initial['city'] = self.instance.location
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Combine city, state, and country into location
+        city = self.cleaned_data.get('city', '').strip()
+        state = self.cleaned_data.get('state', '').strip()
+        country = self.cleaned_data.get('country', '').strip()
+        
+        location_parts = []
+        if city:
+            location_parts.append(city)
+        if state:
+            location_parts.append(state)
+        if country:
+            location_parts.append(country)
+        
+        instance.location = ', '.join(location_parts)
+        
+        if commit:
+            instance.save()
+        return instance
 
 
 class ProjectForm(forms.ModelForm):

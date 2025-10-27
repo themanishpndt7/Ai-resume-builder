@@ -8,6 +8,8 @@ from .forms import ProfileForm, EducationForm, ExperienceForm, ProjectForm, Cove
 from .services import AIResumeGenerator
 from .utils import generate_pdf_from_html, format_resume_for_pdf, create_portfolio_html
 from users.forms import UserProfileForm
+from .countries_data import STATES_BY_COUNTRY
+import json
 
 
 def home(request):
@@ -170,7 +172,12 @@ def experience_add(request):
     else:
         form = ExperienceForm()
     
-    return render(request, 'resume/experience_form.html', {'form': form, 'action': 'Add'})
+    context = {
+        'form': form,
+        'action': 'Add',
+        'states_json': json.dumps(STATES_BY_COUNTRY)
+    }
+    return render(request, 'resume/experience_form.html', context)
 
 
 @login_required
@@ -189,7 +196,12 @@ def experience_edit(request, pk):
     else:
         form = ExperienceForm(instance=experience)
     
-    return render(request, 'resume/experience_form.html', {'form': form, 'action': 'Edit'})
+    context = {
+        'form': form,
+        'action': 'Edit',
+        'states_json': json.dumps(STATES_BY_COUNTRY)
+    }
+    return render(request, 'resume/experience_form.html', context)
 
 
 @login_required

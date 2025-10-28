@@ -15,6 +15,8 @@ from resume.email_check_view import check_email_config
 from resume.test_login_view import test_login_diagnostic, test_simple
 from users.login_views import CustomLoginView
 from users.signup_views import CustomSignupView
+from users.logout_views import CustomLogoutView, QuickLogoutView
+from users.diagnostic_views import auth_diagnostic, database_diagnostic, email_diagnostic
 
 # Custom error handlers
 handler400 = 'core.error_handlers.handler400'
@@ -29,10 +31,15 @@ urlpatterns = [
     path('check-email-config/', check_email_config, name='check_email_config'),
     path('test-login/', test_login_diagnostic, name='test_login_diagnostic'),
     path('test-simple/', test_simple, name='test_simple'),
+    path('auth-diagnostic/', auth_diagnostic, name='auth_diagnostic'),
+    path('database-diagnostic/', database_diagnostic, name='database_diagnostic'),
+    path('email-diagnostic/', email_diagnostic, name='email_diagnostic'),
     
     # Custom authentication views (must be before allauth)
     path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
     path('accounts/signup/', CustomSignupView.as_view(), name='account_signup'),
+    path('accounts/logout/', CustomLogoutView.as_view(), name='account_logout'),
+    path('accounts/quick-logout/', QuickLogoutView.as_view(), name='quick_logout'),
     
     # Custom OTP-based password reset (must be before allauth)
     path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),

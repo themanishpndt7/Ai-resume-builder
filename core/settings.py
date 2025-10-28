@@ -262,8 +262,18 @@ else:
     print("⚠️  Email not configured: Emails will be printed to console")
     print("   Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD to send real emails")
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'noreply@airesume.com')
-SERVER_EMAIL = os.getenv('SERVER_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'server@airesume.com')
+# Email sender configuration with proper display name
+# Format: "Display Name <email@domain.com>"
+if EMAIL_HOST_USER:
+    DEFAULT_FROM_EMAIL = f'AI Resume Builder <{EMAIL_HOST_USER}>'
+    SERVER_EMAIL = f'AI Resume Builder <{EMAIL_HOST_USER}>'
+else:
+    DEFAULT_FROM_EMAIL = 'AI Resume Builder <noreply@ai-resume-builder-6jan.onrender.com>'
+    SERVER_EMAIL = 'AI Resume Builder <server@ai-resume-builder-6jan.onrender.com>'
+
+# You can also set these via environment variables to override
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', DEFAULT_FROM_EMAIL)
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', SERVER_EMAIL)
 
 # OpenAI API Key (set in environment variables)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')

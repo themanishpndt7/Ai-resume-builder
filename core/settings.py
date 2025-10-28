@@ -45,7 +45,12 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:36931',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
+    'https://ai-resume-builder-6jan.onrender.com',
 ]
+
+# Dynamically add Render URL if present
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 # Application definition
 

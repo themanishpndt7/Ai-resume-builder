@@ -16,6 +16,12 @@ from resume.test_login_view import test_login_diagnostic, test_simple
 from users.login_views import CustomLoginView
 from users.signup_views import CustomSignupView
 
+# Custom error handlers
+handler400 = 'core.error_handlers.handler400'
+handler403 = 'core.error_handlers.handler403'
+handler404 = 'core.error_handlers.handler404'
+handler500 = 'core.error_handlers.handler500'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     

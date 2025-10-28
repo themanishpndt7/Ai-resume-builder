@@ -64,7 +64,7 @@
                                 <strong>
                                     {% if message.tags == 'success' %}
                                         <i class="bi bi-check-circle-fill"></i> Success!
-                                    {% elif message.tags == 'error' %}
+                                    {% elif message.tags == 'error' or message.tags == 'danger' %}
                                         <i class="bi bi-exclamation-triangle-fill"></i> Error!
                                     {% else %}
                                         <i class="bi bi-info-circle-fill"></i> Info

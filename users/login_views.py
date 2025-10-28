@@ -63,10 +63,16 @@ class CustomLoginView(AllauthLoginView):
         except Exception as e:
             # Log the error and show user-friendly message
             logger.exception(f"❌ Login error: {str(e)}")
-            messages.error(
-                self.request,
-                'An error occurred during login. Please try again or contact support if the issue persists.'
-            )
+            
+            # Check if error message already exists to prevent duplicates
+            storage = messages.get_messages(self.request)
+            existing_messages = [m.message for m in storage]
+            storage.used = False  # Mark messages as not used so they display
+            
+            error_msg = 'An error occurred during login. Please try again or contact support if the issue persists.'
+            if error_msg not in existing_messages:
+                messages.error(self.request, error_msg)
+                
             return self.form_invalid(form)
     
     def form_invalid(self, form):
@@ -77,16 +83,31 @@ class CustomLoginView(AllauthLoginView):
             # Log form errors for debugging
             if form.errors:
                 logger.warning(f"Login form validation errors: {form.errors}")
+                
+                # Add a single user-friendly error message if not already present
+                storage = messages.get_messages(self.request)
+                existing_messages = [m.message for m in storage]
+                storage.used = False  # Mark messages as not used so they display
+                
+                error_msg = 'Invalid email or password. Please check your credentials and try again.'
+                if error_msg not in existing_messages:
+                    messages.error(self.request, error_msg)
             
             return super().form_invalid(form)
             
         except Exception as e:
             # Catch any unexpected errors in form rendering
             logger.exception(f"Error rendering login form: {str(e)}")
-            messages.error(
-                self.request,
-                'An error occurred. Please try again.'
-            )
+            
+            # Check if error message already exists
+            storage = messages.get_messages(self.request)
+            existing_messages = [m.message for m in storage]
+            storage.used = False
+            
+            error_msg = 'An error occurred. Please try again.'
+            if error_msg not in existing_messages:
+                messages.error(self.request, error_msg)
+                
             return render(self.request, self.template_name, {'form': form})
     
     def get(self, request, *args, **kwargs):

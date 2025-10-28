@@ -4,56 +4,69 @@
 {% block title %}Sign Up - AI Resume Builder{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row align-items-center">
-        <!-- Left Side - Features -->
+<!-- Animated Background -->
+<div class="signup-background"></div>
+
+<div class="container my-5 position-relative">
+    <div class="row align-items-center justify-content-center">
+        <!-- Left Side - Features with Animation -->
         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="signup-features">
-                <h1 class="display-5 fw-bold mb-4">
-                    <i class="bi bi-stars text-warning"></i> Welcome to AI Resume Builder
-                </h1>
-                <p class="lead text-muted mb-4">
-                    Create professional resumes in minutes with AI-powered tools
-                </p>
+            <div class="signup-features animate-fade-in">
+                <div class="feature-header mb-4">
+                    <h1 class="display-4 fw-bold mb-3 gradient-text">
+                        <i class="bi bi-stars"></i> Welcome to AI Resume Builder
+                    </h1>
+                    <p class="lead text-muted mb-4">
+                        Create professional resumes in minutes with AI-powered tools
+                    </p>
+                </div>
                 
                 <div class="feature-list">
-                    <div class="feature-item d-flex align-items-start mb-3">
+                    <div class="feature-item glass-card d-flex align-items-start mb-3 p-3">
                         <div class="feature-icon me-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                            <div class="icon-wrapper">
+                                <i class="bi bi-robot fs-3"></i>
+                            </div>
                         </div>
                         <div>
-                            <h5 class="mb-1">AI-Powered Resume Generation</h5>
-                            <p class="text-muted mb-0">Create tailored resumes with intelligent suggestions</p>
+                            <h5 class="mb-1 fw-bold">AI-Powered Resume Generation</h5>
+                            <p class="text-muted mb-0 small">Create tailored resumes with intelligent suggestions</p>
                         </div>
                     </div>
                     
-                    <div class="feature-item d-flex align-items-start mb-3">
+                    <div class="feature-item glass-card d-flex align-items-start mb-3 p-3">
                         <div class="feature-icon me-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                            <div class="icon-wrapper">
+                                <i class="bi bi-file-earmark-text fs-3"></i>
+                            </div>
                         </div>
                         <div>
-                            <h5 class="mb-1">Professional Templates</h5>
-                            <p class="text-muted mb-0">Choose from multiple ATS-friendly templates</p>
+                            <h5 class="mb-1 fw-bold">Professional Templates</h5>
+                            <p class="text-muted mb-0 small">Choose from multiple ATS-friendly templates</p>
                         </div>
                     </div>
                     
-                    <div class="feature-item d-flex align-items-start mb-3">
+                    <div class="feature-item glass-card d-flex align-items-start mb-3 p-3">
                         <div class="feature-icon me-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                            <div class="icon-wrapper">
+                                <i class="bi bi-envelope-paper fs-3"></i>
+                            </div>
                         </div>
                         <div>
-                            <h5 class="mb-1">Cover Letter Generator</h5>
-                            <p class="text-muted mb-0">Generate compelling cover letters instantly</p>
+                            <h5 class="mb-1 fw-bold">Cover Letter Generator</h5>
+                            <p class="text-muted mb-0 small">Generate compelling cover letters instantly</p>
                         </div>
                     </div>
                     
-                    <div class="feature-item d-flex align-items-start mb-3">
+                    <div class="feature-item glass-card d-flex align-items-start mb-3 p-3">
                         <div class="feature-icon me-3">
-                            <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                            <div class="icon-wrapper">
+                                <i class="bi bi-file-pdf fs-3"></i>
+                            </div>
                         </div>
                         <div>
-                            <h5 class="mb-1">Export to PDF</h5>
-                            <p class="text-muted mb-0">Download your resume in high-quality PDF format</p>
+                            <h5 class="mb-1 fw-bold">Export to PDF</h5>
+                            <p class="text-muted mb-0 small">Download your resume in high-quality PDF format</p>
                         </div>
                     </div>
                 </div>
@@ -62,12 +75,12 @@
         
         <!-- Right Side - Signup Form -->
         <div class="col-lg-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-header text-center bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h3 class="mb-0"><i class="bi bi-person-plus-fill"></i> Create Your Account</h3>
-                    <p class="mb-0 mt-2 small">Start building your professional future today</p>
+            <div class="card glass-morphism shadow-2xl border-0 animate-slide-in">
+                <div class="card-header text-center bg-gradient text-white py-4 border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0 fw-bold"><i class="bi bi-person-plus-fill me-2"></i>Create Your Account</h3>
+                    <p class="mb-0 mt-2 opacity-90">Start building your professional future today</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-4 p-md-5">
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -255,42 +268,146 @@
 </div>
 
 <style>
-/* Card styling */
+/* ============================================
+   ANIMATED BACKGROUND
+   ============================================ */
+.signup-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -1;
+    opacity: 0.05;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   GLASS MORPHISM EFFECTS
+   ============================================ */
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+}
+
+/* ============================================
+   CARD STYLING
+   ============================================ */
 .card {
-    border-radius: 15px;
+    border-radius: 20px;
     overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
 }
 
 .card-header {
     border-bottom: none;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Form styling */
+.card-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-20px, -20px); }
+}
+
+/* ============================================
+   GRADIENT TEXT
+   ============================================ */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   FORM STYLING
+   ============================================ */
 .form-control, .form-select {
     color: #212529 !important;
     background-color: #ffffff !important;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-control:focus, .form-select:focus {
     border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-control:hover {
+    border-color: #c0c0c0;
 }
 
 .form-label {
     color: #212529 !important;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
 }
 
 .form-text {
     color: #6c757d !important;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
 }
 
-/* Password toggle button */
+.form-control.is-valid {
+    border-color: #28a745;
+    background-image: none;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+/* ============================================
+   PASSWORD TOGGLE BUTTON
+   ============================================ */
 .password-wrapper {
     position: relative;
 }
@@ -303,14 +420,16 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 8px;
     color: #6c757d;
     z-index: 10;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    border-radius: 6px;
 }
 
 .password-toggle-btn:hover {
     color: #495057;
+    background: rgba(102, 126, 234, 0.1);
 }
 
 .password-toggle-btn:focus {
@@ -318,46 +437,79 @@
 }
 
 .password-wrapper input {
-    padding-right: 45px;
+    padding-right: 50px;
 }
 
-/* Password strength indicator */
+/* ============================================
+   PASSWORD STRENGTH INDICATOR
+   ============================================ */
 .password-strength {
-    margin-top: 8px;
+    margin-top: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
 }
 
 .strength-text {
     font-size: 0.875rem;
+    font-weight: 600;
 }
 
 .password-requirements {
     list-style: none;
     padding-left: 0;
-    margin-top: 8px;
+    margin-top: 10px;
+    margin-bottom: 0;
 }
 
 .password-requirements li {
-    padding: 2px 0;
-    transition: color 0.3s;
+    padding: 4px 0;
+    transition: all 0.3s;
+    font-size: 0.85rem;
 }
 
 .password-requirements li i {
-    margin-right: 5px;
+    margin-right: 8px;
+    font-size: 0.9rem;
 }
 
-/* Feature list styling */
+/* ============================================
+   ICON WRAPPER
+   ============================================ */
+.icon-wrapper {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ============================================
+   FEATURE LIST STYLING
+   ============================================ */
 .signup-features {
-    padding: 2rem;
+    padding: 2rem 1rem;
 }
 
 .feature-item {
-    animation: fadeInUp 0.5s ease-out;
+    animation: fadeInUp 0.6s ease-out backwards;
+    border-radius: 12px;
+    transition: all 0.3s ease;
 }
+
+.feature-item:nth-child(1) { animation-delay: 0.1s; }
+.feature-item:nth-child(2) { animation-delay: 0.2s; }
+.feature-item:nth-child(3) { animation-delay: 0.3s; }
+.feature-item:nth-child(4) { animation-delay: 0.4s; }
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -365,23 +517,108 @@
     }
 }
 
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .feature-icon {
     flex-shrink: 0;
 }
 
-/* Button styling */
+/* ============================================
+   BUTTON STYLING
+   ============================================ */
 .btn {
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
-/* Dark theme adjustments */
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================
+   ALERT STYLING
+   ============================================ */
+.alert {
+    border-radius: 12px;
+    border: none;
+    padding: 16px 20px;
+    animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+}
+
+/* ============================================
+   DARK THEME ADJUSTMENTS
+   ============================================ */
 [data-bs-theme="dark"] .card {
     background-color: #ffffff !important;
 }
@@ -401,14 +638,43 @@
     color: #212529 !important;
 }
 
-/* Responsive adjustments */
+[data-bs-theme="dark"] .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
 @media (max-width: 991px) {
     .signup-features {
         padding: 1rem 0;
     }
     
-    .display-5 {
+    .display-4 {
         font-size: 2rem;
+    }
+    
+    .feature-item {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .card-body {
+        padding: 2rem 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .icon-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .icon-wrapper i {
+        font-size: 1.2rem;
+    }
+    
+    .feature-item h5 {
+        font-size: 1rem;
     }
 }
 </style>
@@ -513,10 +779,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check password match (only after form submission)
     function checkPasswordMatch() {
-        if (!formSubmitted) return;
+        if (!formSubmitted) return false;
         
         const feedback = document.getElementById('password-match-feedback');
         if (password2.value && password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            feedback.style.display = 'block';
+            return false;
+        } else if (password2.value) {
+            password2.classList.remove('is-invalid');
+            password2.classList.add('is-valid');
+            feedback.style.display = 'none';
+            return true;
+        }
+        return true;
+    }
+    
+    // Validate password match function
+    function validatePasswordMatch() {
+        if (password1.value && password2.value && password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            document.getElementById('password-match-feedback').style.display = 'block';
+            return false;
+        }
+        return true;
+    }
+    
+    // Password2 input listener
+    password2.addEventListener('input', function() {
+        if (formSubmitted) {
+            checkPasswordMatch();
+        }
     });
     
     // Toggle password visibility
@@ -544,17 +837,31 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validate required fields
         form.querySelectorAll('[required]').forEach(field => {
+            if (field.type === 'checkbox') {
+                // Skip checkbox validation here, handled separately
+                return;
+            }
+            
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
                 isValid = false;
             } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
                 field.classList.add('is-invalid');
-                field.nextElementSibling.textContent = 'Please enter a valid email address.';
+                const feedbackEl = field.nextElementSibling;
+                if (feedbackEl && feedbackEl.classList.contains('invalid-feedback')) {
+                    feedbackEl.textContent = 'Please enter a valid email address.';
+                }
                 isValid = false;
             } else if (field.id === 'id_password1' && field.value.length < 8) {
                 field.classList.add('is-invalid');
-                field.nextElementSibling.textContent = 'Password must be at least 8 characters long.';
+                const feedbackEl = field.closest('.password-wrapper').nextElementSibling;
+                if (feedbackEl && feedbackEl.classList.contains('invalid-feedback')) {
+                    feedbackEl.textContent = 'Password must be at least 8 characters long.';
+                }
                 isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+                field.classList.add('is-valid');
             }
         });
         
@@ -564,41 +871,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Check if terms are accepted
-        if (!document.getElementById('terms').checked) {
-            document.getElementById('terms').classList.add('is-invalid');
-            document.querySelector('#terms + .invalid-feedback').style.display = 'block';
+        const termsCheckbox = document.getElementById('terms');
+        if (!termsCheckbox.checked) {
+            termsCheckbox.classList.add('is-invalid');
+            const feedbackEl = termsCheckbox.parentElement.querySelector('.invalid-feedback');
+            if (feedbackEl) {
+                feedbackEl.style.display = 'block';
+            }
             isValid = false;
         }
         
         // Prevent submission if validation fails
         if (!isValid) {
             e.preventDefault();
+            
             // Scroll to first error
             const firstError = form.querySelector('.is-invalid');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstError.focus();
-                
-                // Create a better error display
-                let errorHTML = '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">';
-                errorHTML += '<strong><i class="bi bi-exclamation-triangle-fill"></i> Please fix the following errors:</strong><ul class="mb-0 mt-2">';
-                uniqueErrors.forEach(error => {
-                    errorHTML += `<li>${error}</li>`;
-                });
-                errorHTML += '</ul><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
-                
-                // Insert error message at top of form
-                const existingAlert = form.querySelector('.alert-danger');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
-                form.insertAdjacentHTML('afterbegin', errorHTML);
+                setTimeout(() => {
+                    if (firstError.focus) firstError.focus();
+                }, 300);
             }
             
-            // Scroll to top of form
-            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
             return false;
+        }
+        
+        // Show loading state on submit button
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
         }
     });
     

@@ -116,7 +116,7 @@
                         </div>
                     {% endif %}
                     
-                    <form method="post" action="{% url 'account_signup' %}" id="signupForm" novalidate>
+                    <form method="post" action="{% url 'account_signup' %}" id="signupForm">
                         {% csrf_token %}
                         
                         <!-- First Name -->
@@ -235,8 +235,8 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terms" required>
                                 <label class="form-check-label" for="terms">
-                                    I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
-                                    and <a href="#" class="text-decoration-none">Privacy Policy</a> <span class="text-danger">*</span>
+                                    I agree to the <a href="{% url 'terms_of_service' %}" target="_blank" class="text-decoration-none">Terms of Service</a> 
+                                    and <a href="{% url 'privacy_policy' %}" target="_blank" class="text-decoration-none">Privacy Policy</a> <span class="text-danger">*</span>
                                 </label>
                                 <div class="invalid-feedback">You must agree before submitting.</div>
                             </div>
@@ -433,6 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const strengthText = document.querySelector('.strength-text');
     let formSubmitted = false;
     
+    // Disable browser's default validation messages initially
+    form.setAttribute('novalidate', 'true');
+    
     // Password strength checker
     function checkPasswordStrength(password) {
         let strength = 0;
@@ -499,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Show strength indicator when user starts typing
+    // Show strength indicator when user starts typing (without showing errors)
     password1.addEventListener('input', function() {
         if (this.value.length > 0) {
             strengthIndicator.style.display = 'block';
@@ -508,19 +511,25 @@ document.addEventListener('DOMContentLoaded', function() {
             strengthIndicator.style.display = 'none';
         }
         
-        // Check password match only if form was submitted
-        if (formSubmitted && password2.value) {
+        // Only show validation errors if form was already submitted
+        if (formSubmitted) {
+            if (this.value.length >= 8) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            }
             checkPasswordMatch();
         }
     });
     
-    // Check password match
+    // Check password match (only after form submission)
     function checkPasswordMatch() {
+        if (!formSubmitted) return;
+        
         const feedback = document.getElementById('password-match-feedback');
         if (password2.value && password1.value !== password2.value) {
             password2.classList.add('is-invalid');
-            feedback.textContent = 'Passwords do not match.';
-        } else if (password2.value) {
+            password2.classList.remove('is-valid');
+        } else if (password2.value && password1.value === password2.value) {
             password2.classList.remove('is-invalid');
             password2.classList.add('is-valid');
         }
@@ -558,9 +567,24 @@ document.addEventListener('DOMContentLoaded', function() {
         let isValid = true;
         let errorMessages = [];
         
+        // Remove all previous validation classes
+        form.querySelectorAll('.is-invalid, .is-valid').forEach(el => {
+            el.classList.remove('is-invalid', 'is-valid');
+        });
+        
         // Check all required fields
         const requiredFields = form.querySelectorAll('[required]');
         requiredFields.forEach(field => {
+            // Skip checkbox validation (terms)
+            if (field.type === 'checkbox') {
+                if (!field.checked) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessages.push('You must agree to the Terms of Service and Privacy Policy');
+                }
+                return;
+            }
+            
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
                 isValid = false;
@@ -568,21 +592,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Get field label
                 const label = form.querySelector(`label[for="${field.id}"]`);
                 if (label) {
-                    const fieldName = label.textContent.replace('*', '').trim();
+                    const fieldName = label.textContent.replace('*', '').trim().split('\n')[0];
                     errorMessages.push(`${fieldName} is required`);
                 }
-            } else {
-                field.classList.remove('is-invalid');
             }
         });
         
         // Check email format
         const emailField = document.getElementById('id_email');
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailField.value && !emailPattern.test(emailField.value)) {
-            emailField.classList.add('is-invalid');
-            isValid = false;
-            errorMessages.push('Please enter a valid email address');
+        if (emailField.value) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailField.value)) {
+                emailField.classList.add('is-invalid');
+                isValid = false;
+                errorMessages.push('Please enter a valid email address');
+            }
         }
         
         // Check password length
@@ -603,24 +627,34 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             event.stopPropagation();
             
-            // Show error alert
+            // Show error alert with unique messages
             if (errorMessages.length > 0) {
                 const uniqueErrors = [...new Set(errorMessages)];
-                alert('⚠️ Please fix the following errors:\n\n' + uniqueErrors.join('\n'));
+                
+                // Create a better error display
+                let errorHTML = '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">';
+                errorHTML += '<strong><i class="bi bi-exclamation-triangle-fill"></i> Please fix the following errors:</strong><ul class="mb-0 mt-2">';
+                uniqueErrors.forEach(error => {
+                    errorHTML += `<li>${error}</li>`;
+                });
+                errorHTML += '</ul><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                
+                // Insert error message at top of form
+                const existingAlert = form.querySelector('.alert-danger');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+                form.insertAdjacentHTML('afterbegin', errorHTML);
             }
             
-            // Scroll to first error
-            const firstError = form.querySelector('.is-invalid');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstError.focus();
-            }
+            // Scroll to top of form
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            return false;
         }
-        
-        form.classList.add('was-validated');
     });
     
-    // Remove validation styling when user fixes the field
+    // Remove validation styling when user fixes the field (only after submission)
     form.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', function() {
             if (formSubmitted && this.classList.contains('is-invalid') && this.value.trim()) {
@@ -628,6 +662,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Handle checkbox validation
+    const termsCheckbox = document.getElementById('terms');
+    if (termsCheckbox) {
+        termsCheckbox.addEventListener('change', function() {
+            if (formSubmitted) {
+                if (this.checked) {
+                    this.classList.remove('is-invalid');
+                } else {
+                    this.classList.add('is-invalid');
+                }
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

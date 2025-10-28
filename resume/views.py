@@ -19,6 +19,20 @@ def home(request):
     return render(request, 'resume/home.html')
 
 
+def terms_of_service(request):
+    """
+    Terms of Service page.
+    """
+    return render(request, 'legal/terms.html')
+
+
+def privacy_policy(request):
+    """
+    Privacy Policy page.
+    """
+    return render(request, 'legal/privacy.html')
+
+
 @login_required
 def dashboard(request):
     """

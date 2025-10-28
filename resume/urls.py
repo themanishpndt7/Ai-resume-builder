@@ -16,6 +16,10 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),
     
+    # Legal Pages
+    path('terms/', views.terms_of_service, name='terms_of_service'),
+    path('privacy/', views.privacy_policy, name='privacy_policy'),
+    
     # Profile
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     

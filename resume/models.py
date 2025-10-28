@@ -170,10 +170,24 @@ class GeneratedResume(models.Model):
     """
     Stores generated resumes for users.
     """
+    TEMPLATE_CHOICES = [
+        ('modern', 'Modern Professional'),
+        ('classic', 'Classic Traditional'),
+        ('creative', 'Creative Bold'),
+        ('minimal', 'Minimal Clean'),
+        ('executive', 'Executive Premium'),
+        ('technical', 'Technical Expert'),
+    ]
+    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='generated_resumes')
     title = models.CharField(max_length=200, default="My Resume")
     content = models.TextField(help_text="AI-generated resume content")
-    template = models.CharField(max_length=50, default='modern', help_text="Resume template used")
+    template = models.CharField(
+        max_length=50, 
+        default='modern', 
+        choices=TEMPLATE_CHOICES,
+        help_text="Resume template used"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -189,6 +203,15 @@ class CoverLetter(models.Model):
     """
     Stores AI-generated cover letters for users.
     """
+    TEMPLATE_CHOICES = [
+        ('modern', 'Modern Professional'),
+        ('classic', 'Classic Traditional'),
+        ('creative', 'Creative Bold'),
+        ('minimal', 'Minimal Clean'),
+        ('executive', 'Executive Premium'),
+        ('technical', 'Technical Expert'),
+    ]
+    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cover_letters')
     title = models.CharField(max_length=200, default="My Cover Letter")
     company_name = models.CharField(max_length=200, help_text="Target company name")
@@ -198,14 +221,7 @@ class CoverLetter(models.Model):
     template = models.CharField(
         max_length=50, 
         default='classic',
-        choices=[
-            ('modern', 'Modern'),
-            ('classic', 'Classic'),
-            ('creative', 'Creative'),
-            ('minimal', 'Minimal'),
-            ('executive', 'Executive'),
-            ('technical', 'Technical'),
-        ],
+        choices=TEMPLATE_CHOICES,
         help_text="Template design for PDF generation"
     )
     created_at = models.DateTimeField(auto_now_add=True)

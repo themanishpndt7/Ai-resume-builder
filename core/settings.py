@@ -45,10 +45,9 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:36931',
     'http://127.0.0.1:8000',
     'http://localhost:8000',
-    'https://ai-resume-builder-6jan.onrender.com',
 ]
 
-# Dynamically add Render URL if present
+# Add production domain to CSRF trusted origins
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
@@ -225,11 +224,11 @@ SITE_ID = 1
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False  # Don't require username (using email for authentication)
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Login via email
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # Temporarily disable to fix 500 error
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = False  # Disabled since verification is none
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_FORMS = {
     'signup': 'users.forms.CustomSignupForm',
@@ -262,18 +261,8 @@ else:
     print("⚠️  Email not configured: Emails will be printed to console")
     print("   Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD to send real emails")
 
-# Email sender configuration with proper display name
-# Format: "Display Name <email@domain.com>"
-if EMAIL_HOST_USER:
-    DEFAULT_FROM_EMAIL = f'AI Resume Builder <{EMAIL_HOST_USER}>'
-    SERVER_EMAIL = f'AI Resume Builder <{EMAIL_HOST_USER}>'
-else:
-    DEFAULT_FROM_EMAIL = 'AI Resume Builder <noreply@ai-resume-builder-6jan.onrender.com>'
-    SERVER_EMAIL = 'AI Resume Builder <server@ai-resume-builder-6jan.onrender.com>'
-
-# You can also set these via environment variables to override
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', DEFAULT_FROM_EMAIL)
-SERVER_EMAIL = os.getenv('SERVER_EMAIL', SERVER_EMAIL)
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'noreply@airesume.com')
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'server@airesume.com')
 
 # OpenAI API Key (set in environment variables)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
@@ -281,40 +270,6 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 # Theme settings
 THEME_COOKIE_NAME = 'theme'
 THEME_DEFAULT = 'light'
-
-# Logging configuration for production debugging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-    },
-}
 
 # Security settings (only in production)
 if not DEBUG:
@@ -328,4 +283,4 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'yourdomain.com,www.yourdomain.com').split(',')
+    # Note: ALLOWED_HOSTS is already configured above with RENDER_EXTERNAL_HOSTNAME

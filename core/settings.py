@@ -51,6 +51,9 @@ CSRF_TRUSTED_ORIGINS = [
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
+# Custom CSRF failure view
+CSRF_FAILURE_VIEW = 'users.csrf_views.csrf_failure'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -244,6 +247,22 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'account_login'
 
+# Session Configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store sessions in database
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_SAVE_EVERY_REQUEST = False  # Only save if session is modified
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
+SESSION_COOKIE_SAMESITE = 'Lax'  # Allow cookies on same-site requests
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser closes
+
+# CSRF Cookie Configuration
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_HTTPONLY = False  # JavaScript needs access for AJAX requests
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False  # Store CSRF token in cookie, not session
+CSRF_COOKIE_AGE = 31449600  # 1 year
+
 # Email settings
 # Check if email credentials are configured
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
@@ -274,8 +293,10 @@ THEME_DEFAULT = 'light'
 # Security settings (only in production)
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True  # Only send session cookie over HTTPS
+    CSRF_COOKIE_SECURE = True  # Only send CSRF cookie over HTTPS
+    SESSION_COOKIE_DOMAIN = None  # Let Django auto-detect domain
+    CSRF_COOKIE_DOMAIN = None  # Let Django auto-detect domain
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
@@ -284,6 +305,10 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # Note: ALLOWED_HOSTS is already configured above with RENDER_EXTERNAL_HOSTNAME
+else:
+    # Development settings - allow cookies over HTTP
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 # Logging: ensure errors are visible in platform logs (console)
 LOGGING = {

@@ -47,9 +47,11 @@ class CustomLoginView(AllauthLoginView):
             # Add welcome message after successful login
             user = self.request.user
             if user.is_authenticated:
+                # Get user's full name or email
+                full_name = user.get_full_name() if hasattr(user, 'get_full_name') and user.get_full_name() else user.email
                 messages.success(
                     self.request,
-                    f'Welcome back, {user.get_full_name()}! 🎉'
+                    f'Welcome back, {full_name}! 🎉'
                 )
                 logger.info(f"✅ User logged in successfully: {user.email}")
             
@@ -60,7 +62,7 @@ class CustomLoginView(AllauthLoginView):
             raise
         except Exception as e:
             # Log the error and show user-friendly message
-            logger.exception(f"Login error: {str(e)}")
+            logger.exception(f"❌ Login error: {str(e)}")
             messages.error(
                 self.request,
                 'An error occurred during login. Please try again or contact support if the issue persists.'
@@ -90,7 +92,13 @@ class CustomLoginView(AllauthLoginView):
     def get(self, request, *args, **kwargs):
         """
         Handle GET requests gracefully.
+        Redirect already authenticated users to dashboard.
         """
+        # If user is already authenticated, redirect to dashboard
+        if request.user.is_authenticated:
+            logger.info(f"Already authenticated user {request.user.email} redirected to dashboard")
+            return redirect('dashboard')
+        
         try:
             return super().get(request, *args, **kwargs)
         except Exception as e:

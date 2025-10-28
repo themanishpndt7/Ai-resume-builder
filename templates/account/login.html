@@ -331,6 +331,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Check if there's a CSRF error in the URL (from redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('csrf_error') === '1') {
+        // Show a user-friendly message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-warning alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <strong><i class="bi bi-exclamation-triangle-fill"></i> Session Expired</strong>
+            <p class="mb-0 mt-2">Your session has expired. Please try logging in again.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        const cardBody = document.querySelector('.card-body');
+        cardBody.insertBefore(alertDiv, cardBody.firstChild);
+        
+        // Remove the csrf_error parameter from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 });
 </script>
 {% endblock %}

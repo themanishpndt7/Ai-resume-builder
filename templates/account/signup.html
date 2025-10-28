@@ -86,37 +86,25 @@
                         {% endfor %}
                     {% endif %}
                     
-                    <!-- Only show server-side errors after form submission (POST) -->
-                    {% if request.method == 'POST' %}
-                        {% if form.errors %}
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong><i class="bi bi-exclamation-triangle-fill"></i> Please correct the following errors:</strong>
-                                <ul class="mb-0 mt-2">
-                                    {% for field, errors in form.errors.items %}
-                                        {% for error in errors %}
-                                            <li>
-                                                {% if field == '__all__' %}
-                                                    {{ error }}
-                                                {% else %}
-                                                    {{ field|capfirst }}: {{ error }}
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
+                    <!-- Only show server-side errors after form submission -->
+                    {% if form.errors and form.is_bound %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong><i class="bi bi-exclamation-triangle-fill"></i> Please correct the following errors:</strong>
+                            <ul class="mb-0 mt-2">
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>
+                                            {% if field == '__all__' %}
+                                                {{ error }}
+                                            {% else %}
+                                                <strong>{{ field|title }}:</strong> {{ error }}
+                                            {% endif %}
+                                        </li>
                                     {% endfor %}
-                                </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endif %}
-                        
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong><i class="bi bi-exclamation-triangle-fill"></i> Error:</strong>
-                                {% for error in form.non_field_errors %}
-                                    <div>{{ error }}</div>
                                 {% endfor %}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endif %}
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
                     {% endif %}
                     
                     <form method="post" action="{% url 'account_signup' %}" id="signupForm">
@@ -127,11 +115,11 @@
                             <label for="id_first_name" class="form-label">
                                 <i class="bi bi-person"></i> First Name <span class="text-danger">*</span>
                             </label>
-                            <input type="text" name="first_name" class="form-control form-control-lg {% if request.method == 'POST' and form.first_name.errors %}is-invalid{% endif %}" 
+                            <input type="text" name="first_name" class="form-control form-control-lg {% if form.is_bound and form.first_name.errors %}is-invalid{% endif %}" 
                                    id="id_first_name" placeholder="Enter your first name" 
                                    value="{{ form.first_name.value|default:'' }}" required>
                             <div class="invalid-feedback">
-                                {% if request.method == 'POST' and form.first_name.errors %}
+                                {% if form.is_bound and form.first_name.errors %}
                                     {{ form.first_name.errors.0 }}
                                 {% else %}
                                     Please enter your first name.
@@ -144,11 +132,11 @@
                             <label for="id_last_name" class="form-label">
                                 <i class="bi bi-person"></i> Last Name <span class="text-danger">*</span>
                             </label>
-                            <input type="text" name="last_name" class="form-control form-control-lg {% if request.method == 'POST' and form.last_name.errors %}is-invalid{% endif %}" 
+                            <input type="text" name="last_name" class="form-control form-control-lg {% if form.is_bound and form.last_name.errors %}is-invalid{% endif %}" 
                                    id="id_last_name" placeholder="Enter your last name" 
                                    value="{{ form.last_name.value|default:'' }}" required>
                             <div class="invalid-feedback">
-                                {% if request.method == 'POST' and form.last_name.errors %}
+                                {% if form.is_bound and form.last_name.errors %}
                                     {{ form.last_name.errors.0 }}
                                 {% else %}
                                     Please enter your last name.
@@ -161,17 +149,17 @@
                             <label for="id_email" class="form-label">
                                 <i class="bi bi-envelope"></i> Email Address <span class="text-danger">*</span>
                             </label>
-                            <input type="email" name="email" class="form-control form-control-lg {% if request.method == 'POST' and form.email.errors %}is-invalid{% endif %}" 
+                            <input type="email" name="email" class="form-control form-control-lg {% if form.is_bound and form.email.errors %}is-invalid{% endif %}" 
                                    id="id_email" placeholder="your.email@example.com" 
                                    value="{{ form.email.value|default:'' }}" required>
                             <div class="invalid-feedback">
-                                {% if request.method == 'POST' and form.email.errors %}
+                                {% if form.is_bound and form.email.errors %}
                                     {{ form.email.errors.0 }}
                                 {% else %}
                                     Please enter a valid email address.
                                 {% endif %}
                             </div>
-                            <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            <small class="form-text text-muted">We'll send a verification code to this email.</small>
                         </div>
                         
                         <!-- Password -->
@@ -180,14 +168,14 @@
                                 <i class="bi bi-lock"></i> Password <span class="text-danger">*</span>
                             </label>
                             <div class="password-wrapper position-relative">
-                                <input type="password" name="password1" class="form-control form-control-lg {% if request.method == 'POST' and form.password1.errors %}is-invalid{% endif %}" 
+                                <input type="password" name="password1" class="form-control form-control-lg {% if form.is_bound and form.password1.errors %}is-invalid{% endif %}" 
                                        id="id_password1" placeholder="Create a strong password" required>
                                 <button type="button" class="password-toggle-btn position-absolute" tabindex="-1">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                             <div class="invalid-feedback">
-                                {% if request.method == 'POST' and form.password1.errors %}
+                                {% if form.is_bound and form.password1.errors %}
                                     {{ form.password1.errors.0 }}
                                 {% else %}
                                     Password must be at least 8 characters long.
@@ -245,9 +233,12 @@
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-lg text-white" 
                                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <i class="bi bi-person-plus-fill"></i> Create Account
+                                <i class="bi bi-envelope-check-fill"></i> Send Verification Code
                             </button>
                         </div>
+                        <p class="text-center text-muted small mt-2 mb-0">
+                            <i class="bi bi-info-circle"></i> We'll send a verification code to your email
+                        </p>
                     </form>
                     
                     <hr class="my-4">

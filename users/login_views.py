@@ -25,7 +25,7 @@ class CustomLoginView(AllauthLoginView):
     def form_valid(self, form):
         """
         Handle successful form validation.
-        Override to add 'Remember me' functionality.
+        Override to add 'Remember me' functionality and welcome message.
         """
         try:
             # Get the 'remember' checkbox value
@@ -43,6 +43,15 @@ class CustomLoginView(AllauthLoginView):
             
             # Call parent's form_valid which handles the actual login
             response = super().form_valid(form)
+            
+            # Add welcome message after successful login
+            user = self.request.user
+            if user.is_authenticated:
+                messages.success(
+                    self.request,
+                    f'Welcome back, {user.get_full_name()}! 🎉'
+                )
+                logger.info(f"✅ User logged in successfully: {user.email}")
             
             return response
             

@@ -90,16 +90,16 @@ class PasswordResetRequestView(View):
             try:
                 user = CustomUser.objects.get(email=email, is_active=True)
                 
-                # Rate limiting: Check if user requested OTP recently (within last 2 minutes)
+                # Rate limiting: Check if user requested OTP recently (within last 1 minute)
                 recent_otp = PasswordResetOTP.objects.filter(
                     user=user,
-                    created_at__gte=timezone.now() - timedelta(minutes=2)
+                    created_at__gte=timezone.now() - timedelta(minutes=1)
                 ).first()
                 
                 if recent_otp:
                     messages.warning(
                         request,
-                        'An OTP was recently sent to your email. Please wait 2 minutes before requesting another one.'
+                        'An OTP was recently sent to your email. Please wait 1 minute before requesting another one.'
                     )
                     logger.warning(f"Rate limit hit for password reset: {email}")
                     return render(request, self.template_name, {'form': form})
@@ -122,7 +122,7 @@ You have requested to reset your password for your AI Resume Builder account.
 
 Your OTP code is: {otp_code}
 
-This OTP is valid for 10 minutes.
+This OTP is valid for 5 minutes.
 
 If you did not request this password reset, please ignore this email and your password will remain unchanged.
 
@@ -142,7 +142,7 @@ AI Resume Builder Team
                     logger.info(f"✅ OTP email sent successfully to {email}")
                     messages.success(
                         request, 
-                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 10 minutes.'
+                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 5 minutes.'
                     )
                     return redirect('password_reset_verify_otp')
                     

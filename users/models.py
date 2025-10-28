@@ -44,10 +44,44 @@ class CustomUser(AbstractUser):
         return f"{self.first_name} {self.last_name}".strip() or self.email
 
 
+class SignupOTP(models.Model):
+    """
+    Model to store OTP for email verification during signup.
+    OTP expires after 5 minutes for faster response.
+    """
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    password = models.CharField(max_length=128)  # Hashed password
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Signup OTP'
+        verbose_name_plural = 'Signup OTPs'
+    
+    def __str__(self):
+        return f"Signup OTP for {self.email} - {self.otp}"
+    
+    def is_valid(self):
+        """Check if OTP is still valid (not expired and not verified)."""
+        if self.is_verified:
+            return False
+        expiry_time = self.created_at + timedelta(minutes=5)
+        return timezone.now() < expiry_time
+    
+    @staticmethod
+    def generate_otp():
+        """Generate a random 6-digit OTP."""
+        return str(random.randint(100000, 999999))
+
+
 class PasswordResetOTP(models.Model):
     """
     Model to store OTP for password reset.
-    OTP expires after 10 minutes.
+    OTP expires after 5 minutes for faster response.
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='password_reset_otps')
     otp = models.CharField(max_length=6)
@@ -66,7 +100,7 @@ class PasswordResetOTP(models.Model):
         """Check if OTP is still valid (not expired and not used)."""
         if self.is_used:
             return False
-        expiry_time = self.created_at + timedelta(minutes=10)
+        expiry_time = self.created_at + timedelta(minutes=5)
         return timezone.now() < expiry_time
     
     @staticmethod

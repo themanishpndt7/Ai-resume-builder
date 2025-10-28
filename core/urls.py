@@ -15,6 +15,7 @@ from resume.email_check_view import check_email_config
 from resume.test_login_view import test_login_diagnostic, test_simple
 from users.login_views import CustomLoginView
 from users.signup_views import CustomSignupView
+from users.signup_otp_views import SignupRequestView, SignupVerifyOTPView, ResendSignupOTPView
 from users.logout_views import CustomLogoutView, QuickLogoutView
 from users.diagnostic_views import auth_diagnostic, database_diagnostic, email_diagnostic
 
@@ -37,7 +38,9 @@ urlpatterns = [
     
     # Custom authentication views (must be before allauth)
     path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
-    path('accounts/signup/', CustomSignupView.as_view(), name='account_signup'),
+    path('accounts/signup/', SignupRequestView.as_view(), name='account_signup'),
+    path('accounts/signup/verify-otp/', SignupVerifyOTPView.as_view(), name='signup_verify_otp'),
+    path('accounts/signup/resend-otp/', ResendSignupOTPView.as_view(), name='resend_signup_otp'),
     path('accounts/logout/', CustomLogoutView.as_view(), name='account_logout'),
     path('accounts/quick-logout/', QuickLogoutView.as_view(), name='quick_logout'),
     

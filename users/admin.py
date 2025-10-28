@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from .models import CustomUser, PasswordResetOTP
+from .models import CustomUser, SignupOTP, PasswordResetOTP
 
 
 @admin.register(CustomUser)
@@ -57,6 +57,27 @@ class CustomUserAdmin(UserAdmin):
         """Get user's full name."""
         return obj.get_full_name()
     get_full_name.short_description = 'Full Name'
+
+
+@admin.register(SignupOTP)
+class SignupOTPAdmin(admin.ModelAdmin):
+    """Admin interface for Signup OTP."""
+    list_display = ['email', 'first_name', 'last_name', 'otp', 'created_at', 'is_verified', 'is_valid_badge']
+    list_filter = ['is_verified', 'created_at']
+    search_fields = ['email', 'first_name', 'last_name', 'otp']
+    readonly_fields = ['created_at']
+    ordering = ['-created_at']
+    
+    def is_valid_badge(self, obj):
+        """Display OTP validity status as colored badge."""
+        if obj.is_valid():
+            return format_html(
+                '<span style="background-color: #28a745; color: white; padding: 3px 10px; border-radius: 3px;">Valid</span>'
+            )
+        return format_html(
+            '<span style="background-color: #dc3545; color: white; padding: 3px 10px; border-radius: 3px;">Expired/Verified</span>'
+        )
+    is_valid_badge.short_description = 'Validity'
 
 
 @admin.register(PasswordResetOTP)

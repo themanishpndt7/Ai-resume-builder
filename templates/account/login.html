@@ -316,6 +316,23 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Clear POST data warning - replace history state if coming from POST
+    if (window.history.replaceState && window.performance) {
+        const navEntries = window.performance.getEntriesByType('navigation');
+        if (navEntries.length > 0 && navEntries[0].type === 'reload') {
+            // User refreshed after POST - redirect to clean URL
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+    }
+    
+    // If user is already logged in (check navbar), redirect to dashboard
+    const userDropdown = document.querySelector('#navbarDropdown');
+    if (userDropdown) {
+        // User is authenticated, redirect to dashboard
+        window.location.href = '/dashboard/';
+        return;
+    }
+    
     // Password toggle functionality
     document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
         btn.addEventListener('click', function(e) {

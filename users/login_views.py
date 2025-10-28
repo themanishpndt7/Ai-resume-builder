@@ -117,8 +117,25 @@ class CustomLoginView(AllauthLoginView):
         """
         # If user is already authenticated, redirect to dashboard
         if request.user.is_authenticated:
+            # Clear any lingering error messages
+            storage = messages.get_messages(request)
+            storage.used = True  # Mark all messages as used (clear them)
+            
             logger.info(f"Already authenticated user {request.user.email} redirected to dashboard")
             return redirect('dashboard')
+        
+        # Clear any old error messages from previous failed login attempts
+        # Only clear if there's no POST data (fresh page load)
+        if not request.POST:
+            storage = messages.get_messages(request)
+            # Check if there are old login error messages
+            old_messages = [m for m in storage]
+            storage.used = False  # Don't consume yet
+            
+            # If there are error messages, clear them on fresh GET request
+            if old_messages and all(m.level == messages.ERROR for m in old_messages):
+                storage.used = True  # Clear old error messages
+                logger.info("Cleared old error messages on fresh login page load")
         
         try:
             return super().get(request, *args, **kwargs)

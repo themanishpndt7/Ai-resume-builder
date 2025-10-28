@@ -218,18 +218,14 @@
                                 <i class="bi bi-lock-fill"></i> Confirm Password <span class="text-danger">*</span>
                             </label>
                             <div class="password-wrapper position-relative">
-                                <input type="password" name="password2" class="form-control form-control-lg {% if request.method == 'POST' and form.password2.errors %}is-invalid{% endif %}" 
+                                <input type="password" name="password2" class="form-control form-control-lg" 
                                        id="id_password2" placeholder="Re-enter your password" required>
                                 <button type="button" class="password-toggle-btn position-absolute" tabindex="-1">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                             <div class="invalid-feedback" id="password-match-feedback">
-                                {% if request.method == 'POST' and form.password2.errors %}
-                                    {{ form.password2.errors.0 }}
-                                {% else %}
-                                    Passwords do not match.
-                                {% endif %}
+                                Passwords do not match.
                             </div>
                         </div>
                         
@@ -530,26 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const feedback = document.getElementById('password-match-feedback');
         if (password2.value && password1.value !== password2.value) {
-            password2.classList.add('is-invalid');
-            password2.classList.remove('is-valid');
-        } else if (password2.value && password1.value === password2.value) {
-            password2.classList.remove('is-invalid');
-            password2.classList.add('is-valid');
-        }
-    }
-    
-    password2.addEventListener('input', function() {
-        // Only check match if form was submitted
-        if (formSubmitted) {
-            checkPasswordMatch();
-        }
     });
     
-    // Password toggle functionality
-    document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
+    // Toggle password visibility
+    document.querySelectorAll('.password-toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            const wrapper = this.parentElement;
-            const input = wrapper.querySelector('input');
+            const input = this.previousElementSibling;
             const icon = this.querySelector('i');
             
             if (input.type === 'password') {
@@ -565,74 +547,46 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Form validation on submit
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function(e) {
         formSubmitted = true;
         let isValid = true;
-        let errorMessages = [];
         
-        // Remove all previous validation classes
-        form.querySelectorAll('.is-invalid, .is-valid').forEach(el => {
-            el.classList.remove('is-invalid', 'is-valid');
-        });
-        
-        // Check all required fields
-        const requiredFields = form.querySelectorAll('[required]');
-        requiredFields.forEach(field => {
-            // Skip checkbox validation (terms)
-            if (field.type === 'checkbox') {
-                if (!field.checked) {
-                    field.classList.add('is-invalid');
-                    isValid = false;
-                    errorMessages.push('You must agree to the Terms of Service and Privacy Policy');
-                }
-                return;
-            }
-            
+        // Validate required fields
+        form.querySelectorAll('[required]').forEach(field => {
             if (!field.value.trim()) {
                 field.classList.add('is-invalid');
                 isValid = false;
-                
-                // Get field label
-                const label = form.querySelector(`label[for="${field.id}"]`);
-                if (label) {
-                    const fieldName = label.textContent.replace('*', '').trim().split('\n')[0];
-                    errorMessages.push(`${fieldName} is required`);
-                }
+            } else if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value)) {
+                field.classList.add('is-invalid');
+                field.nextElementSibling.textContent = 'Please enter a valid email address.';
+                isValid = false;
+            } else if (field.id === 'id_password1' && field.value.length < 8) {
+                field.classList.add('is-invalid');
+                field.nextElementSibling.textContent = 'Password must be at least 8 characters long.';
+                isValid = false;
             }
         });
         
-        // Check email format
-        const emailField = document.getElementById('id_email');
-        if (emailField.value) {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(emailField.value)) {
-                emailField.classList.add('is-invalid');
-                isValid = false;
-                errorMessages.push('Please enter a valid email address');
-            }
-        }
-        
-        // Check password length
-        if (password1.value && password1.value.length < 8) {
-            password1.classList.add('is-invalid');
+        // Check if passwords match
+        if (!validatePasswordMatch()) {
             isValid = false;
-            errorMessages.push('Password must be at least 8 characters long');
         }
         
-        // Check password match
-        if (password1.value !== password2.value) {
-            password2.classList.add('is-invalid');
+        // Check if terms are accepted
+        if (!document.getElementById('terms').checked) {
+            document.getElementById('terms').classList.add('is-invalid');
+            document.querySelector('#terms + .invalid-feedback').style.display = 'block';
             isValid = false;
-            errorMessages.push('Passwords do not match');
         }
         
+        // Prevent submission if validation fails
         if (!isValid) {
-            event.preventDefault();
-            event.stopPropagation();
-            
-            // Show error alert with unique messages
-            if (errorMessages.length > 0) {
-                const uniqueErrors = [...new Set(errorMessages)];
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
                 
                 // Create a better error display
                 let errorHTML = '<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">';

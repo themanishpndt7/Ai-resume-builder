@@ -285,7 +285,6 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # Note: ALLOWED_HOSTS is already configured above with RENDER_EXTERNAL_HOSTNAME
 
-
 # Logging: ensure errors are visible in platform logs (console)
 LOGGING = {
     'version': 1,

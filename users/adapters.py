@@ -44,9 +44,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     def add_message(self, request, level, message_tag, message, extra_tags='', fail_silently=False):
         """
         Override to customize success messages for signup.
+        Safely handle message type.
         """
-        # Customize the signup success message
-        if 'successfully signed in' in message.lower():
-            message = '✅ Welcome! You have successfully logged in.'
-        
-        super().add_message(request, level, message_tag, message, extra_tags, fail_silently)
+        msg_str = str(message) if not isinstance(message, str) else message
+        if 'successfully signed in' in msg_str.lower():
+            msg_str = '✅ Welcome! You have successfully logged in.'
+        super().add_message(request, level, message_tag, msg_str, extra_tags, fail_silently)

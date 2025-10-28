@@ -8,8 +8,12 @@ from django.contrib.auth import login
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from datetime import timedelta
 from users.models import CustomUser, PasswordResetOTP
 from django import forms
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PasswordResetRequestForm(forms.Form):
@@ -86,31 +90,45 @@ class PasswordResetRequestView(View):
             try:
                 user = CustomUser.objects.get(email=email, is_active=True)
                 
+                # Rate limiting: Check if user requested OTP recently (within last 2 minutes)
+                recent_otp = PasswordResetOTP.objects.filter(
+                    user=user,
+                    created_at__gte=timezone.now() - timedelta(minutes=2)
+                ).first()
+                
+                if recent_otp:
+                    messages.warning(
+                        request,
+                        'An OTP was recently sent to your email. Please wait 2 minutes before requesting another one.'
+                    )
+                    logger.warning(f"Rate limit hit for password reset: {email}")
+                    return render(request, self.template_name, {'form': form})
+                
                 # Generate OTP
                 otp_code = PasswordResetOTP.generate_otp()
                 
-                # Delete old unused OTPs for this user
+                # Delete old unused OTPs for this user (keep only the newest)
                 PasswordResetOTP.objects.filter(user=user, is_used=False).delete()
                 
                 # Create new OTP
                 PasswordResetOTP.objects.create(user=user, otp=otp_code)
+                logger.info(f"OTP generated for user: {email}")
                 
                 # Send OTP via email
-                subject = 'Password Reset OTP'
-                message = f'''
-Hello {user.get_full_name()},
+                subject = 'Password Reset OTP - AI Resume Builder'
+                message = f'''Hello {user.get_full_name()},
 
-You have requested to reset your password.
+You have requested to reset your password for your AI Resume Builder account.
 
 Your OTP code is: {otp_code}
 
 This OTP is valid for 10 minutes.
 
-If you did not request this, please ignore this email.
+If you did not request this password reset, please ignore this email and your password will remain unchanged.
 
 Best regards,
 AI Resume Builder Team
-                '''
+'''
                 
                 try:
                     # Attempt to send email
@@ -121,22 +139,37 @@ AI Resume Builder Team
                         [email],
                         fail_silently=False,
                     )
-                    print(f"✅ OTP email sent successfully to {email}")
-                    messages.success(request, f'OTP has been sent to {email}. Please check your inbox (including spam folder).')
+                    logger.info(f"✅ OTP email sent successfully to {email}")
+                    messages.success(
+                        request, 
+                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 10 minutes.'
+                    )
                     return redirect('password_reset_verify_otp')
                     
                 except Exception as e:
-                    # Log the error and show user-friendly message
-                    print(f"❌ Failed to send OTP email to {email}")
-                    print(f"Error: {str(e)}")
-                    print(f"Email Backend: {settings.EMAIL_BACKEND}")
-                    print(f"Email Host User: {settings.EMAIL_HOST_USER if settings.EMAIL_HOST_USER else 'NOT SET'}")
+                    # Log the error with full details
+                    logger.error(f"❌ Failed to send OTP email to {email}")
+                    logger.error(f"Error type: {type(e).__name__}")
+                    logger.error(f"Error message: {str(e)}")
+                    logger.error(f"Email Backend: {settings.EMAIL_BACKEND}")
+                    logger.error(f"Email Host: {getattr(settings, 'EMAIL_HOST', 'NOT SET')}")
+                    logger.error(f"Email Port: {getattr(settings, 'EMAIL_PORT', 'NOT SET')}")
+                    logger.error(f"Email Host User: {settings.EMAIL_HOST_USER if settings.EMAIL_HOST_USER else 'NOT SET'}")
+                    logger.error(f"Email Use TLS: {getattr(settings, 'EMAIL_USE_TLS', 'NOT SET')}")
                     
-                    messages.error(
-                        request, 
-                        'Failed to send OTP email. Please contact support or try again later. '
-                        'Error: Email service is not properly configured.'
-                    )
+                    # Provide detailed error message for debugging
+                    if 'console' in settings.EMAIL_BACKEND.lower():
+                        messages.warning(
+                            request,
+                            'Email backend is set to console. Check server logs for the OTP code. '
+                            'Configure EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in environment variables to send real emails.'
+                        )
+                    else:
+                        messages.error(
+                            request, 
+                            'Failed to send OTP email. Please ensure email credentials are configured correctly on Render. '
+                            f'Error: {type(e).__name__}. Contact support if this persists.'
+                        )
                     return render(request, self.template_name, {'form': form})
                 
             except CustomUser.DoesNotExist:
@@ -144,7 +177,7 @@ AI Resume Builder Team
                 return render(request, self.template_name, {'form': form})
             except Exception as e:
                 # Catch any other unexpected errors
-                print(f"❌ Unexpected error in password reset: {str(e)}")
+                logger.exception(f"❌ Unexpected error in password reset: {str(e)}")
                 messages.error(request, 'An unexpected error occurred. Please try again.')
                 return render(request, self.template_name, {'form': form})
         
@@ -156,7 +189,11 @@ class PasswordResetVerifyOTPView(View):
     template_name = 'account/password_reset_verify_otp.html'
     
     def get(self, request):
-        form = OTPVerificationForm()
+        # If an email was recently used to request OTP, pre-fill it
+        initial = {}
+        if request.session.get('password_reset_email'):
+            initial['email'] = request.session.get('password_reset_email')
+        form = OTPVerificationForm(initial=initial)
         return render(request, self.template_name, {'form': form})
     
     def post(self, request):
@@ -168,6 +205,20 @@ class PasswordResetVerifyOTPView(View):
             
             try:
                 user = CustomUser.objects.get(email=email, is_active=True)
+                
+                # Rate limiting: Track failed attempts in session
+                session_key = f'otp_attempts_{email}'
+                attempts = request.session.get(session_key, 0)
+                
+                if attempts >= 5:
+                    messages.error(
+                        request,
+                        'Too many failed attempts. Please request a new OTP.'
+                    )
+                    logger.warning(f"Too many OTP verification attempts for: {email}")
+                    request.session[session_key] = 0  # Reset counter
+                    return redirect('password_reset_request')
+                
                 otp_obj = PasswordResetOTP.objects.filter(
                     user=user,
                     otp=otp,
@@ -178,13 +229,27 @@ class PasswordResetVerifyOTPView(View):
                     # OTP is valid, proceed to password reset
                     request.session['reset_email'] = email
                     request.session['reset_otp'] = otp
+                    request.session[session_key] = 0  # Reset failed attempts
+                    logger.info(f"OTP verified successfully for: {email}")
                     messages.success(request, 'OTP verified successfully! Please set your new password.')
                     return redirect('password_reset_confirm')
                 else:
-                    messages.error(request, 'Invalid or expired OTP. Please try again.')
+                    # Increment failed attempts
+                    request.session[session_key] = attempts + 1
+                    remaining = 5 - (attempts + 1)
+                    logger.warning(f"Invalid OTP attempt for {email}. Attempts remaining: {remaining}")
+                    
+                    if remaining > 0:
+                        messages.error(
+                            request,
+                            f'Invalid or expired OTP. You have {remaining} attempt(s) remaining.'
+                        )
+                    else:
+                        messages.error(request, 'Invalid or expired OTP. Please request a new one.')
                     
             except CustomUser.DoesNotExist:
                 messages.error(request, 'Invalid email address.')
+                logger.warning(f"OTP verification attempted for non-existent user: {email}")
         
         return render(request, self.template_name, {'form': form})
 

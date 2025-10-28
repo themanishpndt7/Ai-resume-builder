@@ -13,6 +13,8 @@ from resume.password_reset_views import (
 )
 from resume.email_check_view import check_email_config
 from resume.test_login_view import test_login_diagnostic, test_simple
+from users.login_views import CustomLoginView
+from users.signup_views import CustomSignupView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,13 +24,17 @@ urlpatterns = [
     path('test-login/', test_login_diagnostic, name='test_login_diagnostic'),
     path('test-simple/', test_simple, name='test_simple'),
     
+    # Custom authentication views (must be before allauth)
+    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
+    path('accounts/signup/', CustomSignupView.as_view(), name='account_signup'),
+    
     # Custom OTP-based password reset (must be before allauth)
     path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),
     path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
-    # Allauth URLs (our custom password reset will override)
+    # Allauth URLs (our custom views will override)
     path('accounts/', include('allauth.urls')),
     
     # Resume app URLs

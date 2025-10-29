@@ -159,6 +159,33 @@
     background-color: #ffffff !important;
 }
 
+/* Force muted/grey text to white on this page for better contrast in dark mode */
+.text-muted,
+.muted-text,
+small.text-muted,
+.form-text,
+.feature-desc {
+    color: #ffffff !important;
+}
+
+[data-bs-theme='light'] .text-muted,
+body.light-theme .text-muted,
+body[data-theme='light'] .text-muted,
+[data-bs-theme='light'] .muted-text,
+body.light-theme .muted-text,
+body[data-theme='light'] .muted-text,
+[data-bs-theme='light'] small.text-muted,
+body.light-theme small.text-muted,
+body[data-theme='light'] small.text-muted,
+[data-bs-theme='light'] .form-text,
+body.light-theme .form-text,
+body[data-theme='light'] .form-text,
+[data-bs-theme='light'] .feature-desc,
+body.light-theme .feature-desc,
+body[data-theme='light'] .feature-desc {
+    color: #111 !important;
+}
+
 [data-bs-theme="dark"] .card-body {
     background-color: #ffffff !important;
 }

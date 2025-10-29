@@ -8,46 +8,50 @@
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row align-items-center">
+<!-- Animated Particle Background -->
+<canvas id="particles-canvas-login"></canvas>
+
+<div class="futuristic-login-container">
+    <div class="container">
+    <div class="row align-items-center justify-content-center min-vh-100 py-5">
         <!-- Left Side - Information -->
-        <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="login-info-section">
-                <h1 class="display-5 fw-bold mb-4">
-                    <i class="bi bi-box-arrow-in-right text-primary"></i> Welcome Back!
+        <div class="col-lg-5 mb-4 mb-lg-0">
+            <div class="login-info-section animate-fade-in">
+                <h1 class="hero-title-login mb-4">
+                    <i class="bi bi-box-arrow-in-right"></i> Welcome Back!
                 </h1>
-                <p class="lead text-muted mb-4">
-                    Access your resume, cover letters, and all your professional documents
+                <p class="hero-subtitle-login mb-5">
+                    Access your AI-powered resume builder and continue crafting your professional future
                 </p>
                 
                 <div class="feature-list">
-                    <div class="feature-item d-flex align-items-start mb-3">
-                        <div class="feature-icon me-3">
-                            <i class="bi bi-shield-check text-success fs-4"></i>
+                    <div class="feature-card-3d-login mb-3">
+                        <div class="feature-icon-3d-login me-3">
+                            <i class="bi bi-shield-check"></i>
                         </div>
                         <div>
-                            <h5 class="mb-1">Secure Login</h5>
-                            <p class="text-muted mb-0">Your account is protected with encryption</p>
+                            <h5 class="feature-title-login mb-2">Secure & Encrypted</h5>
+                            <p class="feature-desc-login mb-0">Your data is protected with enterprise-grade security</p>
                         </div>
                     </div>
                     
-                    <div class="feature-item d-flex align-items-start mb-3">
-                        <div class="feature-icon me-3">
-                            <i class="bi bi-file-text text-info fs-4"></i>
+                    <div class="feature-card-3d-login mb-3">
+                        <div class="feature-icon-3d-login me-3">
+                            <i class="bi bi-robot"></i>
                         </div>
                         <div>
-                            <h5 class="mb-1">Access Your Documents</h5>
-                            <p class="text-muted mb-0">View and edit all your saved resumes</p>
+                            <h5 class="feature-title-login mb-2">AI-Powered Tools</h5>
+                            <p class="feature-desc-login mb-0">Smart resume generation at your fingertips</p>
                         </div>
                     </div>
                     
-                    <div class="feature-item d-flex align-items-start mb-3">
-                        <div class="feature-icon me-3">
-                            <i class="bi bi-lightning-fill text-warning fs-4"></i>
+                    <div class="feature-card-3d-login mb-3">
+                        <div class="feature-icon-3d-login me-3">
+                            <i class="bi bi-lightning-charge-fill"></i>
                         </div>
                         <div>
-                            <h5 class="mb-1">Quick Access</h5>
-                            <p class="text-muted mb-0">Pick up where you left off instantly</p>
+                            <h5 class="feature-title-login mb-2">Instant Access</h5>
+                            <p class="feature-desc-login mb-0">Pick up exactly where you left off</p>
                         </div>
                     </div>
                 </div>
@@ -56,12 +60,12 @@
         
         <!-- Right Side - Login Form -->
         <div class="col-lg-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-header text-center text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h3 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Login to Your Account</h3>
-                    <p class="mb-0 mt-2 small">Enter your credentials to continue</p>
+            <div class="glass-card-login animate-slide-in">
+                <div class="card-header-login text-center py-4">
+                    <h3 class="card-title-login mb-2"><i class="bi bi-box-arrow-in-right me-2"></i>Login to Your Account</h3>
+                    <p class="card-subtitle-login mb-0">Enter your credentials to continue your journey</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body-login p-4 p-md-5">
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -118,8 +122,8 @@
                             <div class="password-wrapper position-relative">
                                 <input type="password" name="password" class="form-control form-control-lg" 
                                        id="id_password" placeholder="Enter your password" required>
-                                <button type="button" class="password-toggle-btn position-absolute" tabindex="-1">
-                                    <i class="bi bi-eye"></i>
+                                <button type="button" class="password-toggle-btn position-absolute" tabindex="0" aria-pressed="false" aria-label="Show password">
+                                    <i class="bi bi-eye" aria-hidden="true"></i>
                                 </button>
                             </div>
                             {% if form.password.errors %}
@@ -166,69 +170,233 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 
+<!-- Back to Home Button -->
+<a href="{% url 'home' %}" class="btn-back-home">
+    <i class="bi bi-house-door-fill me-2"></i>Back to Home
+</a>
+
 <style>
-/* Card styling */
-.card {
-    border-radius: 15px;
+/* ============================================
+   FUTURISTIC LOGIN PAGE STYLES
+   ============================================ */
+:root {
+    --primary-color: #00d4ff;
+    --secondary-color: #7b2cbf;
+    --accent-color: #ff006e;
+    --dark-bg: #0a0e27;
+    --darker-bg: #050816;
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+}
+
+/* Animated Particle Background */
+#particles-canvas-login {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, var(--darker-bg) 100%);
+}
+
+.futuristic-login-container {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+/* Hero Title & Subtitle */
+.hero-title-login {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 60px rgba(123, 44, 191, 0.6), 0 4px 20px rgba(0, 0, 0, 0.5);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+}
+
+.hero-subtitle-login {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--text-light);
+    font-weight: 400;
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 212, 255, 0.3);
+    line-height: 1.6;
+}
+
+/* Glass Card */
+.glass-card-login {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 212, 255, 0.1);
     overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-login:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 80px rgba(0, 212, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Card Header */
+.card-header-login {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     border: none;
+    position: relative;
+    overflow: hidden;
 }
 
-.card-header {
-    border-bottom: none;
+.card-header-login::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: shimmer 4s infinite;
 }
 
-/* Form styling */
+@keyframes shimmer {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, -30px); }
+}
+
+.card-title-login {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+
+.card-subtitle-login {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 1;
+}
+
+.card-body-login {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+/* Feature Cards */
+.feature-card-3d-login {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.feature-card-3d-login:nth-child(1) { animation-delay: 0.1s; }
+.feature-card-3d-login:nth-child(2) { animation-delay: 0.2s; }
+.feature-card-3d-login:nth-child(3) { animation-delay: 0.3s; }
+
+.feature-card-3d-login:hover {
+    transform: translateX(10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.feature-icon-3d-login {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.feature-title-login {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.feature-desc-login {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Form Styling */
 .form-control, .form-select {
-    color: #212529 !important;
-    background-color: #ffffff !important;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(0, 212, 255, 0.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: #ffffff !important;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15), 0 0 20px rgba(0, 212, 255, 0.2);
+    transform: translateY(-2px);
+    color: #ffffff !important;
+}
+
+.form-control:hover {
+    border-color: rgba(0, 212, 255, 0.4);
 }
 
 .form-label {
-    color: #212529 !important;
-    font-weight: 500;
+    color: var(--text-light) !important;
+    font-weight: 600;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .form-check-label {
-    color: #212529 !important;
-    margin-left: 5px;
+    color: var(--text-light) !important;
+    font-size: 0.9rem;
 }
 
-/* Alerts */
-.alert {
-    border-radius: 8px;
-    border: none;
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* Invalid feedback */
-.invalid-feedback {
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-/* Password toggle button */
+/* Password Toggle */
 .password-wrapper {
     position: relative;
 }
@@ -238,36 +406,72 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background: rgba(0, 212, 255, 0.1);
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    padding: 5px;
-    color: #6c757d;
+    padding: 8px;
+    color: var(--primary-color);
     z-index: 10;
-    transition: color 0.2s;
+    transition: all 0.3s;
 }
 
 .password-toggle-btn:hover {
-    color: #495057;
+    background: rgba(0, 212, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .password-wrapper input {
-    padding-right: 45px;
+    padding-right: 50px;
 }
 
-/* Feature list styling */
-.login-info-section {
-    padding: 2rem;
+/* Buttons */
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
 }
 
-.feature-item {
-    animation: fadeInUp 0.5s ease-out;
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
 }
 
-@keyframes fadeInUp {
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+}
+
+/* Alerts */
+.alert {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 12px;
+    color: #ffffff;
+    animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(-20px);
     }
     to {
         opacity: 1;
@@ -275,41 +479,125 @@
     }
 }
 
-/* Button styling */
-.btn {
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+.alert-success {
+    background: rgba(40, 167, 69, 0.2);
+    border-color: #28a745;
+    color: #d4edda;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.alert-danger {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: #dc3545;
+    color: #f8d7da;
 }
 
-/* Dark theme */
-[data-bs-theme="dark"] .card {
-    background-color: #ffffff !important;
+.invalid-feedback {
+    color: #ff6b9d;
+    font-size: 0.875rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-[data-bs-theme="dark"] .card-body {
-    background-color: #ffffff !important;
+/* Back to Home Button */
+.btn-back-home {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+    transition: all 0.3s;
+    z-index: 1000;
+    font-size: 0.9rem;
 }
 
-[data-bs-theme="dark"] .form-control {
-    color: #212529 !important;
-    background-color: #ffffff !important;
+.btn-back-home:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+    color: #fff;
 }
 
-[data-bs-theme="dark"] .form-label,
-[data-bs-theme="dark"] .form-check-label {
-    color: #212529 !important;
+/* Animations */
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Links */
+a {
+    color: var(--primary-color);
+    transition: all 0.3s;
+}
+
+a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
 }
 
 /* Responsive */
 @media (max-width: 991px) {
-    .login-info-section {
-        padding: 1rem 0;
+    .hero-title-login {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle-login {
+        font-size: 1rem;
+    }
+    
+    .feature-card-3d-login {
+        padding: 1rem;
+    }
+    
+    .btn-back-home {
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 0.85rem;
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body-login {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .feature-icon-3d-login {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
     }
 }
 </style>
@@ -333,22 +621,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Password toggle functionality
+    // Password toggle functionality (accessible)
     document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const wrapper = this.parentElement;
-            const input = wrapper.querySelector('input');
-            const icon = this.querySelector('i');
-            
-            if (input.type === 'password') {
+        function togglePasswordBtn() {
+            const wrapper = btn.closest('.password-wrapper') || btn.parentElement;
+            const input = wrapper ? wrapper.querySelector('input') : null;
+            const icon = btn.querySelector('i');
+            if (!input || !icon) return;
+
+            const isHidden = input.type === 'password';
+            if (isHidden) {
                 input.type = 'text';
                 icon.classList.remove('bi-eye');
                 icon.classList.add('bi-eye-slash');
+                btn.setAttribute('aria-pressed', 'true');
+                btn.setAttribute('aria-label', 'Hide password');
             } else {
                 input.type = 'password';
                 icon.classList.remove('bi-eye-slash');
                 icon.classList.add('bi-eye');
+                btn.setAttribute('aria-pressed', 'false');
+                btn.setAttribute('aria-label', 'Show password');
+            }
+            btn.focus();
+        }
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            togglePasswordBtn();
+        });
+
+        btn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                togglePasswordBtn();
             }
         });
     });
@@ -369,6 +675,87 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Remove the csrf_error parameter from URL
         window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // ============================================
+    // PARTICLE ANIMATION BACKGROUND
+    // ============================================
+    const canvas = document.getElementById('particles-canvas-login');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particles = [];
+        const particleCount = 80;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(0, 212, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function init() {
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 120) {
+                        ctx.strokeStyle = `rgba(0, 212, 255, ${0.15 * (1 - distance / 120)})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        init();
+        animate();
+        
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     }
 });
 </script>

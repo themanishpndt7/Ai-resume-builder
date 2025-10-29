@@ -1,5 +1,31 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Form elements
+    const signupForm = document.getElementById('signupForm');
+    const otpVerification = document.getElementById('otpVerification');
+    const userEmailSpan = document.getElementById('userEmail');
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const otpValue = document.getElementById('otpValue');
+    const resendOtpBtn = document.getElementById('resendOtp');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const otpTimer = document.getElementById('otpTimer');
+    
+    // OTP timer variables
+    let otpTimerInterval;
+    let timeLeft = 60;
+    // Form elements
+    const signupForm = document.getElementById('signupForm');
+    const otpVerification = document.getElementById('otpVerification');
+    const userEmailSpan = document.getElementById('userEmail');
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const otpValue = document.getElementById('otpValue');
+    const resendOtpBtn = document.getElementById('resendOtp');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const otpTimer = document.getElementById('otpTimer');
+    
+    // OTP timer variables
+    let otpTimerInterval;
+    let timeLeft = 60;
     // Theme Toggle
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');

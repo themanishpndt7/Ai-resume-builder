@@ -9,6 +9,27 @@
 {% include 'account/signup_styles.html' %}
 {% endblock %}
 
+{% block messages %}
+    {# Override base.html messages block to prevent duplicate display #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                <strong>
+                    {% if message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill"></i>
+                    {% elif message.tags == 'error' %}
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    {% else %}
+                        <i class="bi bi-info-circle-fill"></i>
+                    {% endif %}
+                </strong>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 <!-- Theme Toggle -->
 <div class="theme-toggle" id="themeToggle">
@@ -90,6 +111,7 @@
                     
                     <form method="post" action="{% url 'account_signup' %}" id="signupForm" novalidate>
                         {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'signup_verify_otp' %}">
                         
                         <div class="form-group">
                             <label class="form-label" for="id_first_name">First Name <span style="color: var(--error-color);">*</span></label>
@@ -170,6 +192,32 @@
                     
                     <div class="login-link">
                         Already have an account? <a href="{% url 'account_login' %}">Login here</a>
+                    </div>
+                    
+                    <!-- Hidden OTP Verification Section -->
+                    <div id="otpVerification" style="display: none;">
+                        <div class="otp-container">
+                            <h4>Verify Your Email</h4>
+                            <p class="text-muted">We've sent a verification code to <span id="userEmail"></span></p>
+                            
+                            <div class="otp-inputs">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                                <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                            </div>
+                            
+                            <input type="hidden" name="otp" id="otpValue">
+                            
+                            <div class="otp-actions">
+                                <button type="button" class="btn btn-link" id="resendOtp">Resend Code</button>
+                                <span id="otpTimer" class="text-muted">(60s)</span>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mt-3" id="verifyOtpBtn">Verify & Continue</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1241,6 +1241,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<!-- Toast container for nicer notifications (Bootstrap Toast) -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 11000;">
+    <div id="globalToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="globalToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+<script>
+    // Show Bootstrap toast when there is a success message in the page (e.g., redirected after signup)
+    (function() {
+        try {
+            const successAlert = document.querySelector('.alert-success');
+            if (successAlert) {
+                const toastEl = document.getElementById('globalToast');
+                const toastBody = document.getElementById('globalToastBody');
+                if (toastEl && toastBody) {
+                    // Use the alert content as toast message
+                    toastBody.innerHTML = successAlert.innerHTML;
+                    // Hide the original alert to avoid duplication
+                    successAlert.remove();
+                    const bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                    bsToast.show();
+                }
+            }
+        } catch (e) {
+            // Fail silently; toast is enhancement only
+            console.warn('Toast init failed', e);
+        }
+    })();
+</script>
 <!-- Three.js and GSAP for home-like background animation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>

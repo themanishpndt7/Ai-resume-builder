@@ -8,6 +8,7 @@ and provides step-by-step instructions.
 
 import webbrowser
 import time
+import os
 
 def show_instructions():
     print("=" * 70)
@@ -96,7 +97,7 @@ def show_instructions():
     print()
     print("📌 QUICK REFERENCE:")
     print()
-    print("Your Gmail: mpandat0052@gmail.com")
+    print("Your Gmail:", os.environ.get('EMAIL_HOST_USER', 'your-email@example.com'))
     print("App Password: [The 16-character code you just generated]")
     print()
     print("After configuration, test with:")
@@ -129,7 +130,8 @@ def manual_instructions():
     print()
     print("Step 3: Configure Django")
     print("   Run: python3 configure_email.py")
-    print("   Email: mpandat0052@gmail.com")
+    import os
+    print("   Email:", os.environ.get('EMAIL_HOST_USER', 'your-email@example.com'))
     print("   Password: [Your 16-character App Password]")
     print()
     print("Step 4: Test")

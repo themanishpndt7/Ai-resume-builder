@@ -116,8 +116,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use PostgreSQL in production, SQLite in development
-if 'DATABASE_URL' in os.environ:
+# Database configuration: prefer explicit PostgreSQL env vars, then DATABASE_URL, fall back to sqlite
+if os.getenv('POSTGRES_DB') or os.getenv('DB_NAME'):
+    # Support explicit Postgres environment variables for local/dev setups
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', os.getenv('DB_NAME')),
+            'USER': os.getenv('POSTGRES_USER', os.getenv('DB_USER', 'postgres')),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', os.getenv('DB_PASSWORD', '')),
+            'HOST': os.getenv('POSTGRES_HOST', os.getenv('DB_HOST', 'localhost')),
+            'PORT': os.getenv('POSTGRES_PORT', os.getenv('DB_PORT', '5432')),
+        }
+    }
+elif 'DATABASE_URL' in os.environ:
+    # Allow DATABASE_URL (e.g., Heroku / Render) to override
     DATABASES = {
         'default': dj_database_url.config(
             default=os.environ.get('DATABASE_URL'),
@@ -338,6 +351,12 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        # Enable verbose logging for the mail backend to help diagnose SMTP issues
+        'django.core.mail': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': False,
         },
         'django.request': {

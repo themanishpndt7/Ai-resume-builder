@@ -50,15 +50,12 @@ if env_user == django_user:
     print()
     print("Django is using the correct email from .env file.")
     print()
-    if django_user == 'mpandat0052@gmail.com':
-        print("✅ Correct email: mpandat0052@gmail.com")
-        print()
-        print("Your password reset emails should work now!")
-        print()
-        print("Test it at: http://localhost:8000/accounts/login/")
-    else:
-        print(f"⚠️  Email is: {django_user}")
-        print("   (Make sure this is correct)")
+    # Print the effective configured address (avoid hard-coded checks)
+    print(f"Configured EMAIL_HOST_USER: {django_user}")
+    print()
+    print("If this is your sending account, password reset emails should be deliverable (check inbox/spam).")
+    print()
+    print("Test password reset at: http://localhost:8000/accounts/login/")
 else:
     print("❌ CONFIGURATION MISMATCH!")
     print()

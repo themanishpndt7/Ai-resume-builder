@@ -9,10 +9,10 @@ django.setup()
 
 User = get_user_model()
 
-# Create superuser with specified credentials
-username = 'admin'
-email = 'mpandat0052@gmail.com'
-password = '123456'
+# Create superuser with specified credentials (use environment variables or sensible defaults)
+username = os.environ.get('ADMIN_USERNAME', 'admin')
+email = os.environ.get('ADMIN_EMAIL', 'admin@example.com')
+password = os.environ.get('ADMIN_PASSWORD', 'changeme')
 
 # Check if user already exists
 if User.objects.filter(username=username).exists():

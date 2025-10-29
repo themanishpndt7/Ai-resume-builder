@@ -50,3 +50,40 @@ def test_email_quick(request):
             "status": "error",
             "message": str(e)
         }, status=500)
+
+
+@require_http_methods(["GET"])
+def debug_last_otp(request):
+    """Return the last PasswordResetOTP for a given email (development only).
+
+    Usage (GET): /resume/debug/last-otp/?email=user@example.com
+    Only available when settings.DEBUG is True and the request comes from localhost.
+    """
+    if not getattr(settings, 'DEBUG', False):
+        return JsonResponse({'error': 'Debug endpoint disabled'}, status=403)
+
+    # Restrict to localhost requests for safety
+    remote = request.META.get('REMOTE_ADDR', '')
+    if remote not in ('127.0.0.1', '::1', 'localhost', ''):
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
+    email = request.GET.get('email')
+    if not email:
+        return JsonResponse({'error': 'Missing email query parameter'}, status=400)
+
+    try:
+        user = CustomUser.objects.get(email__iexact=email)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+    otp_obj = PasswordResetOTP.objects.filter(user=user).order_by('-created_at').first()
+    if not otp_obj:
+        return JsonResponse({'status': 'no_otp'})
+
+    return JsonResponse({
+        'status': 'ok',
+        'email': user.email,
+        'otp': otp_obj.otp,
+        'created_at': otp_obj.created_at.isoformat(),
+        'is_used': otp_obj.is_used,
+    })

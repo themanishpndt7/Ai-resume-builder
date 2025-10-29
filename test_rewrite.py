@@ -17,7 +17,7 @@ user = CustomUser.objects.first()
 # Test with sample AI-generated resume content
 test_resume = """# Manish Sharma
 
-Email: mpandat0052@gmail.com | Phone: +91 7982682852
+Email: user@example.com | Phone: +91 7982682852
 
 ## Career Objective
 

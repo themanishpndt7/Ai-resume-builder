@@ -3,6 +3,7 @@ URL configuration for core project.
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from resume.password_reset_views import (
@@ -11,6 +12,7 @@ from resume.password_reset_views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView
 )
+from resume.password_reset_views import ResendPasswordResetOTPView, PasswordResetCombinedView, ClearPasswordResetJustSentView
 from resume.email_check_view import check_email_config
 from resume.test_login_view import test_login_diagnostic, test_simple
 from users.login_views import CustomLoginView
@@ -50,9 +52,16 @@ urlpatterns = [
     path('accounts/delete/confirm/', DeleteAccountView.as_view(), name='delete_account_confirm'),
     
     # Custom OTP-based password reset (must be before allauth)
-    path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
-    path('accounts/password/reset/verify/', PasswordResetVerifyOTPView.as_view(), name='password_reset_verify_otp'),
-    path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    # Combined password reset & verify page
+    path('accounts/password/reset/', PasswordResetCombinedView.as_view(), name='password_reset_request'),
+    # Keep the verify route for compatibility but redirect it to the main combined reset page
+    path('accounts/password/reset/verify/', RedirectView.as_view(pattern_name='password_reset_request', permanent=False), name='password_reset_verify_otp'),
+    path('accounts/password/reset/resend/', ResendPasswordResetOTPView.as_view(), name='resend_password_reset_otp'),
+    path('accounts/password/reset/clear-just-sent/', ClearPasswordResetJustSentView.as_view(), name='password_reset_clear_just_sent'),
+    # Keep a URL that accepts uid/token for compatibility with libraries that build token links
+    path('accounts/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    # Simpler confirm path used by our OTP flow (session-based). Named differently to avoid clash.
+    path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_simple'),
     path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
     # Allauth URLs (our custom views will override)

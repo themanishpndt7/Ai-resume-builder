@@ -4,11 +4,13 @@ URL configuration for resume app.
 from django.urls import path
 from . import views
 from .diagnostic_views import config_check, test_email_quick
+from .diagnostic_views import debug_last_otp
 
 urlpatterns = [
     # Diagnostic endpoints (for debugging production issues)
     path('api/config-check/', config_check, name='config_check'),
     path('api/test-email/', test_email_quick, name='test_email_quick'),
+    path('debug/last-otp/', debug_last_otp, name='debug_last_otp'),
     
     # Password Reset URLs are in core/urls.py (not here to avoid conflicts)
     

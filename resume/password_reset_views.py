@@ -115,14 +115,23 @@ class PasswordResetRequestView(View):
                 logger.info(f"OTP generated for user: {email}")
                 
                 # Send OTP via email
-                subject = 'Password Reset OTP - AI Resume Builder'
+                subject = 'Secure Password Reset — AI Resume Builder'
                 message = f'''Hello {user.get_full_name()},
+
+Secure Password Reset — Email Verification
 
 You have requested to reset your password for your AI Resume Builder account.
 
-Your OTP code is: {otp_code}
+Your 6-digit OTP code is: {otp_code}
 
-This OTP is valid for 5 minutes.
+This OTP is valid for 10 minutes.
+
+How it works:
+- We generated a one-time, 6-digit code and sent it to your email.
+- Enter the code on the verification page to confirm your identity and proceed to set a new secure password.
+
+Security tip:
+Keep your account safe by choosing a long, unique password and never sharing this code with anyone.
 
 If you did not request this password reset, please ignore this email and your password will remain unchanged.
 
@@ -142,7 +151,7 @@ AI Resume Builder Team
                     logger.info(f"✅ OTP email sent successfully to {email}")
                     messages.success(
                         request, 
-                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 5 minutes.'
+                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 10 minutes.'
                     )
                     return redirect('password_reset_verify_otp')
                     

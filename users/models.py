@@ -88,7 +88,7 @@ def create_deleted_email(sender, instance, **kwargs):
 class SignupOTP(models.Model):
     """
     Model to store OTP for email verification during signup.
-    OTP expires after 5 minutes for faster response.
+    OTP expires after 10 minutes for user convenience.
     """
     email = models.EmailField()
     otp = models.CharField(max_length=6)
@@ -110,7 +110,7 @@ class SignupOTP(models.Model):
         """Check if OTP is still valid (not expired and not verified)."""
         if self.is_verified:
             return False
-        expiry_time = self.created_at + timedelta(minutes=5)
+        expiry_time = self.created_at + timedelta(minutes=10)
         return timezone.now() < expiry_time
     
     @staticmethod
@@ -122,7 +122,7 @@ class SignupOTP(models.Model):
 class PasswordResetOTP(models.Model):
     """
     Model to store OTP for password reset.
-    OTP expires after 5 minutes for faster response.
+    OTP expires after 10 minutes for user convenience.
     """
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='password_reset_otps')
     otp = models.CharField(max_length=6)
@@ -141,7 +141,7 @@ class PasswordResetOTP(models.Model):
         """Check if OTP is still valid (not expired and not used)."""
         if self.is_used:
             return False
-        expiry_time = self.created_at + timedelta(minutes=5)
+        expiry_time = self.created_at + timedelta(minutes=10)
         return timezone.now() < expiry_time
     
     @staticmethod

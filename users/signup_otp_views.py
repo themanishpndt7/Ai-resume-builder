@@ -136,13 +136,22 @@ class SignupRequestView(View):
                 subject = 'Verify Your Email - AI Resume Builder'
                 message = f'''Hello {first_name} {last_name},
 
-Welcome to AI Resume Builder! 
+Welcome to AI Resume Builder!
 
-To complete your registration, please verify your email address using the OTP below:
+Email Verification — Secure Signup
+
+To complete your registration, please verify your email address using the 6-digit OTP below:
 
 Your OTP code is: {otp_code}
 
-This OTP is valid for 5 minutes.
+This OTP is valid for 10 minutes.
+
+How it works:
+- We generated a one-time, 6-digit code and sent it to this email address.
+- Enter the code on the verification page to confirm your email and activate your account.
+
+Security tip:
+Never share this code. We will never ask for your password via email.
 
 If you did not create an account, please ignore this email.
 
@@ -165,7 +174,7 @@ AI Resume Builder Team
                     
                     messages.success(
                         request,
-                        f'A verification code has been sent to {email}. Please check your inbox and enter the OTP to complete registration.'
+                        f'A verification code has been sent to {email}. The code is valid for 10 minutes. Please check your inbox and enter the OTP to complete registration.'
                     )
                     return redirect('signup_verify_otp')
                     
@@ -312,7 +321,7 @@ Here is your new verification code:
 
 Your OTP code is: {new_otp}
 
-This OTP is valid for 5 minutes.
+This OTP is valid for 10 minutes.
 
 Best regards,
 AI Resume Builder Team

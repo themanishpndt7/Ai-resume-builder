@@ -150,13 +150,27 @@
                         
                         {{ profile_form.location }}
                         
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle"></i> Save Changes
-                            </button>
-                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-x-circle"></i> Cancel
-                            </a>
+                        <div class="d-flex flex-column gap-3 mt-4">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
+                            
+                            <!-- Delete Account Button -->
+                            <div class="mt-4 pt-3 border-top">
+                                <h5 class="text-danger mb-3">Danger Zone</h5>
+                                <p class="text-muted">
+                                    <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                                    Deleting your account will permanently remove all your data. This action cannot be undone.
+                                </p>
+                                <a href="{% url 'delete_account_confirm' %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete My Account
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>

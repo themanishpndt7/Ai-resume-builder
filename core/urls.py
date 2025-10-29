@@ -18,6 +18,7 @@ from users.signup_views import CustomSignupView
 from users.signup_otp_views import SignupRequestView, SignupVerifyOTPView, ResendSignupOTPView
 from users.logout_views import CustomLogoutView, QuickLogoutView
 from users.diagnostic_views import auth_diagnostic, database_diagnostic, email_diagnostic
+from users.delete_account_views import delete_account, DeleteAccountView
 
 # Custom error handlers
 handler400 = 'core.error_handlers.handler400'
@@ -43,6 +44,10 @@ urlpatterns = [
     path('accounts/signup/resend-otp/', ResendSignupOTPView.as_view(), name='resend_signup_otp'),
     path('accounts/logout/', CustomLogoutView.as_view(), name='account_logout'),
     path('accounts/quick-logout/', QuickLogoutView.as_view(), name='quick_logout'),
+    
+    # Account management
+    path('accounts/delete/', delete_account, name='delete_account'),
+    path('accounts/delete/confirm/', DeleteAccountView.as_view(), name='delete_account_confirm'),
     
     # Custom OTP-based password reset (must be before allauth)
     path('accounts/password/reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),

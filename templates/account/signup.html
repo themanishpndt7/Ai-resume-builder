@@ -369,7 +369,7 @@
     --dark-bg: #0a0e27;
     --darker-bg: #050816;
     --text-light: #e2e8f0;
-    --text-muted: #94a3b8;
+    --text-muted: #ffffff;
 }
 
 /* Animated Particle Background */
@@ -824,6 +824,35 @@ body[data-theme='light'] .feature-item p,
     color: var(--text-muted) !important;
     font-size: 0.85rem;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Force common muted/grey text to appear white on this page for dark-mode contrast */
+.text-muted,
+.muted-text,
+small.text-muted,
+.lead,
+.form-text,
+.feature-desc {
+    color: #ffffff !important;
+}
+
+/* Light theme overrides: make these darker for contrast when using a light theme */
+[data-bs-theme='light'] .text-muted,
+body.light-theme .text-muted,
+body[data-theme='light'] .text-muted,
+[data-bs-theme='light'] .muted-text,
+body.light-theme .muted-text,
+body[data-theme='light'] .muted-text,
+[data-bs-theme='light'] small.text-muted,
+body.light-theme small.text-muted,
+body[data-theme='light'] small.text-muted,
+[data-bs-theme='light'] .form-text,
+body.light-theme .form-text,
+body[data-theme='light'] .form-text,
+[data-bs-theme='light'] .feature-desc,
+body.light-theme .feature-desc,
+body[data-theme='light'] .feature-desc {
+    color: #111 !important;
 }
 
 .form-check-label {

@@ -1,8 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 import random
+from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_save, post_delete
+from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
@@ -31,6 +34,14 @@ class CustomUser(AbstractUser):
                 qs = qs.exclude(pk=self.pk)
             if qs.exists():
                 raise ValueError(f"Username '{self.username}' is already taken.")
+        
+        # Check if email was recently deleted
+        if self.email and not self.pk:  # Only check for new users
+            if DeletedEmail.is_email_deleted(self.email):
+                raise ValidationError(
+                    "This email was recently used for a deleted account. "
+                    "Please use a different email or wait 30 days."
+                )
     
     class Meta:
         verbose_name = 'User'
@@ -38,10 +49,40 @@ class CustomUser(AbstractUser):
         ordering = ['-created_at']
     
     def __str__(self):
+        if self.deleted_at:
+            return f"{self.email} (deleted on {self.deleted_at.strftime('%Y-%m-%d')})"
         return self.email
     
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip() or self.email
+
+
+class DeletedEmail(models.Model):
+    """
+    Model to store deleted emails for a certain period.
+    """
+    email = models.EmailField(unique=True)
+    deleted_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def is_email_deleted(cls, email):
+        """
+        Check if an email was recently deleted.
+        """
+        qs = cls.objects.filter(email=email)
+        if qs.exists():
+            deleted_at = qs.first().deleted_at
+            if (timezone.now() - deleted_at).days < 30:
+                return True
+        return False
+
+
+@receiver(post_delete, sender=CustomUser)
+def create_deleted_email(sender, instance, **kwargs):
+    """
+    Signal to create a DeletedEmail record when a user is deleted.
+    """
+    DeletedEmail.objects.create(email=instance.email.lower())
 
 
 class SignupOTP(models.Model):
@@ -94,7 +135,7 @@ class PasswordResetOTP(models.Model):
         verbose_name_plural = 'Password Reset OTPs'
     
     def __str__(self):
-        return f"OTP for {self.user.email} - {self.otp}"
+        return f"OTP {self.otp} for {self.user.email}"
     
     def is_valid(self):
         """Check if OTP is still valid (not expired and not used)."""

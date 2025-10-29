@@ -24,34 +24,10 @@ class CustomSignupForm(SignupForm):
     )
     
     def save(self, request):
-        # Ensure a username is provided (CustomUser.username is required at the DB level)
-        # allauth may be configured to not require a username in the form, so generate one
-        # from the email local-part and ensure uniqueness.
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-
-        if not username and email:
-            base = email.split('@')[0]
-            # Sanitize base: allow letters, numbers, underscores, hyphens and dots
-            import re
-            base = re.sub(r"[^A-Za-z0-9_.-]", '', base)[:140]
-            candidate = base
-            suffix = 0
-            from .models import CustomUser
-            while CustomUser.objects.filter(username=candidate).exists():
-                suffix += 1
-                candidate = f"{base[:135]}{suffix}"
-            self.cleaned_data['username'] = candidate
-
         user = super(CustomSignupForm, self).save(request)
-        # Populate first and last name and persist
-        user.first_name = self.cleaned_data.get('first_name', '')
-        user.last_name = self.cleaned_data.get('last_name', '')
-        try:
-            user.save()
-        except Exception:
-            # If save fails, raise so allauth shows an error instead of silent failure
-            raise
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.save()
         return user
 
 

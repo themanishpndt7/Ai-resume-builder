@@ -199,7 +199,7 @@
     --dark-bg: #0a0e27;
     --darker-bg: #050816;
     --text-light: #e2e8f0;
-    --text-muted: #94a3b8;
+    --text-muted: #ffffff;
 }
 
 /* Animated Particle Background */
@@ -323,6 +323,24 @@ body {
     color: #00d4ff !important;
 }
 
+/* Ensure decorative icons/logos are visible across themes */
+[data-bs-theme='dark'] .icon-wrapper i,
+[data-bs-theme='dark'] .feature-icon i,
+[data-bs-theme='dark'] .bi,
+body.dark-theme .icon-wrapper i,
+body.dark-theme .feature-icon i {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+[data-bs-theme='light'] .icon-wrapper i,
+[data-bs-theme='light'] .feature-icon i,
+body.light-theme .icon-wrapper i,
+body.light-theme .feature-icon i {
+    color: #111 !important;
+    fill: #111 !important;
+}
+
 /* Hero Title & Subtitle */
 .hero-title-login {
     font-family: 'Poppins', sans-serif;
@@ -344,6 +362,24 @@ body {
     font-weight: 400;
     text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 212, 255, 0.3);
     line-height: 1.6;
+}
+
+/* Ensure feature titles and descriptions are clearly visible across themes */
+.feature-title-login {
+    color: rgba(255,255,255,0.95) !important;
+}
+.feature-desc-login {
+    color: rgba(255,255,255,0.95) !important;
+}
+
+/* Light theme overrides */
+[data-bs-theme='light'] .feature-title-login,
+body.light-theme .feature-title-login,
+body[data-theme='light'] .feature-title-login,
+[data-bs-theme='light'] .feature-desc-login,
+body.light-theme .feature-desc-login,
+body[data-theme='light'] .feature-desc-login {
+    color: #111 !important;
 }
 
 /* Glass Card */
@@ -461,9 +497,34 @@ body[data-theme='light'] .card-subtitle-login {
 }
 
 .feature-desc-login {
-    color: var(--text-muted);
+    color: var(--text-muted) !important;
     font-size: 0.9rem;
     text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Make general muted/grey text appear white on this page (with light-theme overrides) */
+.text-muted,
+.muted-text,
+small.text-muted,
+.lead,
+.form-text {
+    color: #ffffff !important;
+}
+
+/* Respect light theme: make these darker for contrast when theme is light */
+[data-bs-theme='light'] .text-muted,
+body.light-theme .text-muted,
+body[data-theme='light'] .text-muted,
+[data-bs-theme='light'] .muted-text,
+body.light-theme .muted-text,
+body[data-theme='light'] .muted-text,
+[data-bs-theme='light'] small.text-muted,
+body.light-theme small.text-muted,
+body[data-theme='light'] small.text-muted,
+[data-bs-theme='light'] .form-text,
+body.light-theme .form-text,
+body[data-theme='light'] .form-text {
+    color: #111 !important;
 }
 
 /* Form Styling */

@@ -13,7 +13,7 @@
 
 <div class="futuristic-signup-container">
 <div class="container position-relative">
-    <div class="row align-items-center justify-content-center min-vh-100 py-5">
+    <div class="row align-items-center justify-content-center py-5" style="min-height: calc(100vh - 120px); margin-top: 80px;">
         <!-- Left Side - Features with Animation -->
         <div class="col-lg-5 mb-4 mb-lg-0">
             <div class="signup-features animate-fade-in">
@@ -345,14 +345,46 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: -1;
     background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, var(--darker-bg) 100%);
 }
 
 .futuristic-signup-container {
     position: relative;
     z-index: 1;
-    min-height: 100vh;
+    min-height: calc(100vh - 120px);
+}
+
+/* Ensure navbar is visible */
+body {
+    background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, var(--darker-bg) 100%);
+}
+
+.navbar {
+    position: relative;
+    z-index: 1000;
+    background: rgba(10, 14, 39, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+.navbar .nav-link,
+.navbar .navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar .dropdown-menu {
+    background: rgba(10, 14, 39, 0.98) !important;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.navbar .dropdown-item {
+    color: #e2e8f0 !important;
+}
+
+.navbar .dropdown-item:hover {
+    background: rgba(0, 212, 255, 0.2) !important;
+    color: #00d4ff !important;
 }
 
 /* Hero Title & Subtitle */
@@ -468,7 +500,16 @@
 }
 
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Autofill styling */
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .form-control:focus, .form-select:focus {
@@ -730,6 +771,17 @@
     color: #ff6b9d;
     font-size: 0.875rem;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    display: none !important;
+}
+
+.invalid-feedback.d-block {
+    display: block !important;
+}
+
+/* Only show validation after form submission */
+.was-validated .form-control:invalid ~ .invalid-feedback,
+.form-control.is-invalid ~ .invalid-feedback {
+    display: block !important;
 }
 
 /* ============================================
@@ -904,14 +956,14 @@
     bottom: 2rem;
     left: 2rem;
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: #fff;
+    color: #fff !important;
     padding: 12px 24px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 600;
     box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
     transition: all 0.3s;
-    z-index: 1000;
+    z-index: 999;
     font-size: 0.9rem;
 }
 
@@ -922,14 +974,31 @@
 }
 
 /* Links */
-a {
+.card-body-signup a,
+.signup-features a {
     color: var(--primary-color);
     transition: all 0.3s;
 }
 
-a:hover {
+.card-body-signup a:hover,
+.signup-features a:hover {
     color: #fff;
     text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+}
+
+/* Footer styling */
+.footer {
+    background: var(--darker-bg) !important;
+    border-top: 1px solid rgba(0, 212, 255, 0.1);
+    color: var(--text-light) !important;
+}
+
+.footer p {
+    color: var(--text-light) !important;
+}
+
+.footer .text-muted {
+    color: var(--text-muted) !important;
 }
 
 /* Responsive */
@@ -990,6 +1059,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Disable browser's default validation messages initially
     form.setAttribute('novalidate', 'true');
+    
+    // Only show validation after user starts interacting
+    let hasInteracted = false;
+    form.addEventListener('input', function() {
+        if (!hasInteracted) {
+            hasInteracted = true;
+        }
+    });
     
     // ============================================
     // ANIMATED CHARACTER INTERACTIONS
@@ -1133,6 +1210,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('is-valid');
             }
             checkPasswordMatch();
+        }
+    });
+    
+    // Remove invalid feedback display on page load for all fields
+    document.querySelectorAll('.invalid-feedback').forEach(function(el) {
+        if (!formSubmitted) {
+            el.style.display = 'none';
         }
     });
     

@@ -332,7 +332,7 @@
                                 <i class="bi bi-envelope-check-fill"></i> Send Verification Code
                             </button>
                         </div>
-                        <p class="text-center text-muted small mt-2 mb-0">
+                        <p class="text-center text-muted small mt-2 mb-0 send-verification-note">
                             <i class="bi bi-info-circle"></i> We'll send a verification code to your email
                         </p>
                     </form>
@@ -474,6 +474,24 @@ body {
 .navbar .dropdown-item:hover {
     background: rgba(0, 212, 255, 0.2) !important;
     color: #00d4ff !important;
+}
+
+/* Ensure decorative icons/logos are visible across themes */
+[data-bs-theme='dark'] .icon-wrapper i,
+[data-bs-theme='dark'] .feature-icon i,
+[data-bs-theme='dark'] .bi,
+body.dark-theme .icon-wrapper i,
+body.dark-theme .feature-icon i {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+[data-bs-theme='light'] .icon-wrapper i,
+[data-bs-theme='light'] .feature-icon i,
+body.light-theme .icon-wrapper i,
+body.light-theme .feature-icon i {
+    color: #111 !important;
+    fill: #111 !important;
 }
 
 /* Hero Title & Subtitle */
@@ -659,8 +677,7 @@ body[data-theme='light'] .card-subtitle-signup {
 
 .form-control::placeholder { color: rgba(255,255,255,0.55) !important; }
 
-/* Make the email helper slightly more visible */
-.form-text#email-help { color: rgba(226,232,240,0.9); }
+.form-text#email-help { color: #ffffff !important; }
 .email-help { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
 .email-help .help-icon { font-size: 1rem; transition: transform 220ms ease, opacity 220ms ease; }
 .email-help .help-icon.check { color: #28a745; }
@@ -669,6 +686,9 @@ body[data-theme='light'] .card-subtitle-signup {
 .email-help.valid .help-icon.info { display: none; }
 .email-help .help-text { display: inline-block; }
 .email-help .muted { color: rgba(226,232,240,0.85); }
+
+/* Ensure the small verification note is clearly visible (white in dark, dark in light) */
+.send-verification-note { color: #ffffff !important; }
 
 .form-control::placeholder {
     color: rgba(255, 255, 255, 0.5) !important;
@@ -693,6 +713,13 @@ body[data-theme='light'] .card-subtitle-signup {
 
 [data-bs-theme="dark"] .form-control::placeholder {
     color: rgba(255,255,255,0.9) !important;
+}
+
+/* Light theme: ensure verification note is dark for contrast */
+[data-bs-theme="light"] .send-verification-note,
+body.light-theme .send-verification-note,
+body[data-theme="light"] .send-verification-note {
+    color: #111111 !important;
 }
 
 /* Light theme overrides */

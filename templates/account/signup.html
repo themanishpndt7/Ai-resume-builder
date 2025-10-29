@@ -1012,7 +1012,24 @@ body[data-theme='light'] .feature-desc {
 .strength-text.weak { background: rgba(220,53,69,0.12); color: #dc3545; }
 .strength-text.fair { background: rgba(255,193,7,0.12); color: #ffc107; }
 .strength-text.good { background: rgba(40,167,69,0.10); color: #28a745; }
-.strength-text.strong { background: rgba(40,167,69,0.15); color: #1e7e34; font-weight: 800; transform: translateY(-1px); }
+.strength-text.strong { 
+    background: linear-gradient(90deg, rgba(34,197,94,0.15), rgba(16,185,129,0.18));
+    color: #ffffff; 
+    font-weight: 900; 
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 24px rgba(16,185,129,0.18), inset 0 -2px 8px rgba(0,0,0,0.12);
+}
+
+/* Strong progress bar visual */
+.password-strength .progress-bar.progress-strong {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 8px 30px rgba(34,197,94,0.22);
+}
+
+/* When all requirements are met, add a celebratory pulse to each requirement briefly */
+.password-requirements.all-met li {
+    transform: translateY(-2px) scale(1.02);
+}
 
 /* Met/unmet requirement styles */
 .password-requirements li.met { color: #28a745 !important; }
@@ -1766,25 +1783,65 @@ document.addEventListener('DOMContentLoaded', function() {
             text = 'Good';
             percentage = 75;
         } else {
-            color = '#28a745';
+            color = '#16a34a';
             text = 'Strong';
             percentage = 100;
         }
         
-            progressBar.style.width = percentage + '%';
-            progressBar.style.backgroundColor = color;
+        // Update progress bar
+        progressBar.style.width = percentage + '%';
+        progressBar.style.backgroundColor = color;
+        // Toggle strong progress styling when fully strong
+        if (percentage === 100) {
+            progressBar.classList.add('progress-strong');
+        } else {
+            progressBar.classList.remove('progress-strong');
+        }
 
-            // Update strength text (badge) with semantic classes for styling
+        // Update strength text (badge) with semantic classes for styling
+        // For Strong state, show a check icon and stronger visual treatment
+        strengthText.classList.remove('very-weak','weak','fair','good','strong');
+        if (text === 'Very Weak') {
             strengthText.textContent = text;
-            strengthText.classList.remove('very-weak','weak','fair','good','strong');
-            if (text === 'Very Weak') strengthText.classList.add('very-weak');
-            else if (text === 'Weak') strengthText.classList.add('weak');
-            else if (text === 'Fair') strengthText.classList.add('fair');
-            else if (text === 'Good') strengthText.classList.add('good');
-            else if (text === 'Strong') strengthText.classList.add('strong');
+            strengthText.classList.add('very-weak');
+        } else if (text === 'Weak') {
+            strengthText.textContent = text;
+            strengthText.classList.add('weak');
+        } else if (text === 'Fair') {
+            strengthText.textContent = text;
+            strengthText.classList.add('fair');
+        } else if (text === 'Good') {
+            strengthText.textContent = text;
+            strengthText.classList.add('good');
+        } else if (text === 'Strong') {
+            strengthText.innerHTML = '<i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>' + text;
+            strengthText.classList.add('strong');
+            // Subtle celebratory animation
+            strengthText.animate([
+                { transform: 'scale(0.98) translateY(0px)', opacity: 0.95 },
+                { transform: 'scale(1.06) translateY(-4px)', opacity: 1 },
+                { transform: 'scale(1) translateY(0px)', opacity: 1 }
+            ], { duration: 420, easing: 'cubic-bezier(0.2,0.9,0.2,1)' });
+        }
 
-            // Accessibility: announce the current strength
-            strengthText.setAttribute('aria-live', 'polite');
+        // Accessibility: announce the current strength and set aria-label
+        strengthText.setAttribute('aria-live', 'polite');
+        strengthText.setAttribute('aria-atomic', 'true');
+        strengthText.setAttribute('aria-label', text + ' password strength');
+
+        // If all requirements met, add celebratory pulse to requirements list
+        const reqItems = document.querySelectorAll('.password-requirements li');
+        const allMet = Array.from(reqItems).every(li => li.classList.contains('met'));
+        const reqList = document.querySelector('.password-requirements');
+        if (allMet) {
+            reqList.classList.add('all-met');
+            reqItems.forEach(li => {
+                li.classList.add('pulse');
+                setTimeout(() => li.classList.remove('pulse'), 600);
+            });
+        } else {
+            reqList.classList.remove('all-met');
+        }
     }
     
     function updateRequirement(id, met) {

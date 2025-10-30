@@ -11,6 +11,7 @@ from django.utils import timezone
 from datetime import timedelta
 from users.models import CustomUser, PasswordResetOTP
 from django import forms
+from django.utils.translation import gettext_lazy as _
 import logging
 from django.http import JsonResponse
 from django.contrib.auth.tokens import default_token_generator
@@ -68,33 +69,32 @@ class NewPasswordForm(forms.Form):
         cleaned_data = super().clean()
         password1 = cleaned_data.get('password1')
         password2 = cleaned_data.get('password2')
-        
+        # Attach errors to specific fields (so the template displays them inline like signup)
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords do not match!")
+            self.add_error('password2', _('Passwords do not match. Please re-enter your new password.'))
+
         # Enforce stronger password rules: min 8 chars, uppercase, lowercase, number
         if password1:
             errors = []
             if len(password1) < 8:
-                errors.append('be at least 8 characters')
+                errors.append(_('be at least 8 characters'))
             if not any(c.isupper() for c in password1):
-                errors.append('include an uppercase letter')
+                errors.append(_('include an uppercase letter'))
             if not any(c.islower() for c in password1):
-                errors.append('include a lowercase letter')
+                errors.append(_('include a lowercase letter'))
             if not any(c.isdigit() for c in password1):
-                errors.append('include a number')
+                errors.append(_('include a number'))
             if errors:
-                raise forms.ValidationError('Password must ' + ', '.join(errors) + '.')
-        
+                # Add a helpful error message to password1 field so it shows beside the input
+                self.add_error('password1', _('Password must ') + ', '.join(errors) + '.')
+
         return cleaned_data
 
 
 class PasswordResetRequestView(View):
     """Step 1: User enters email to receive OTP."""
+    # Use the main password_reset.html as the canonical combined template
     template_name = 'account/password_reset.html'
-    # NOTE: the project now uses the combined OTP/verify template; keep reference
-    # pointing to the canonical verify template to avoid accidentally rendering
-    # a removed/renamed file.
-    template_name = 'account/password_reset_verify_otp.html'
     
     def get(self, request, uidb64=None, token=None, *args, **kwargs):
         form = PasswordResetRequestForm()
@@ -214,7 +214,7 @@ AI Resume Builder Team
 
 class PasswordResetVerifyOTPView(View):
     """Step 2: User enters OTP to verify."""
-    template_name = 'account/password_reset_verify_otp.html'
+    template_name = 'account/password_reset.html'
     
     def get(self, request, uidb64=None, token=None, *args, **kwargs):
         # If an email was recently used to request OTP, pre-fill it
@@ -378,8 +378,8 @@ class PasswordResetCombinedView(View):
                         request.session.pop('password_reset_email', None)
                         request.session.pop('password_reset_just_sent', None)
 
-                        messages.success(request, 'Password reset successful. Please login with your new password.')
-                        return redirect('account_login')
+                        messages.success(request, 'Password reset successful. You can now sign in with your new password.')
+                        return redirect('password_reset_done')
                     else:
                         messages.error(request, 'Invalid OTP. Please try again.')
                         return redirect('password_reset_verify_otp')
@@ -451,8 +451,8 @@ class PasswordResetConfirmView(View):
                         # Clear token/session keys
                         request.session.pop('reset_email', None)
                         request.session.pop('reset_token', None)
-                        messages.success(request, 'Your password has been reset successfully! You can now login.')
-                        return redirect('password_reset_complete')
+                        messages.success(request, 'Your password has been reset successfully!')
+                        return redirect('password_reset_done')
                     else:
                         messages.error(request, 'Invalid or expired reset token.')
                         return redirect('password_reset_request')
@@ -477,8 +477,8 @@ class PasswordResetConfirmView(View):
                     request.session.pop('reset_email', None)
                     request.session.pop('reset_otp', None)
 
-                    messages.success(request, 'Your password has been reset successfully! You can now login.')
-                    return redirect('password_reset_complete')
+                    messages.success(request, 'Your password has been reset successfully!')
+                    return redirect('password_reset_done')
                 else:
                     messages.error(request, 'Invalid or expired OTP.')
                     return redirect('password_reset_request')
@@ -494,6 +494,19 @@ class PasswordResetCompleteView(View):
     """Step 4: Show success message."""
     template_name = 'account/password_reset_complete.html'
     
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class PasswordResetDoneView(View):
+    """Simple success page shown after a successful password reset.
+
+    This is the friendly confirmation page the frontend redirects to after
+    a successful password change. It intentionally keeps a compact template
+    to meet the requirement of a clear success page.
+    """
+    template_name = 'account/password_reset_done.html'
+
     def get(self, request):
         return render(request, self.template_name)
 

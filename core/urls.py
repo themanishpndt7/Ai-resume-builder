@@ -13,6 +13,7 @@ from resume.password_reset_views import (
     PasswordResetCompleteView
 )
 from resume.password_reset_views import ResendPasswordResetOTPView, PasswordResetCombinedView, ClearPasswordResetJustSentView
+from resume.password_reset_views import PasswordResetDoneView
 from resume.email_check_view import check_email_config
 from resume.test_login_view import test_login_diagnostic, test_simple
 from users.login_views import CustomLoginView
@@ -63,6 +64,7 @@ urlpatterns = [
     # Simpler confirm path used by our OTP flow (session-based). Named differently to avoid clash.
     path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_simple'),
     path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('accounts/password/reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
     
     # Allauth URLs (our custom views will override)
     path('accounts/', include('allauth.urls')),

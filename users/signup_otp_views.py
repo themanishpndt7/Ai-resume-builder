@@ -61,7 +61,10 @@ class SignupRequestForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email=email).exists():
-            raise forms.ValidationError('A user is already registered with this email address.')
+            # Provide a friendlier and actionable message
+            raise forms.ValidationError(
+                'An account with this email already exists. Try logging in or use "Forgot password" to reset your password.'
+            )
         return email
     
     def clean(self):

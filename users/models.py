@@ -49,8 +49,16 @@ class CustomUser(AbstractUser):
         ordering = ['-created_at']
     
     def __str__(self):
-        if self.deleted_at:
-            return f"{self.email} (deleted on {self.deleted_at.strftime('%Y-%m-%d')})"
+        # Some deployments (or older user rows) may not have a `deleted_at` attribute
+        # on the user instance. Guard with getattr to avoid AttributeError in admin
+        # pages and elsewhere where str(obj) is called.
+        deleted_at = getattr(self, 'deleted_at', None)
+        if deleted_at:
+            try:
+                return f"{self.email} (deleted on {deleted_at.strftime('%Y-%m-%d')})"
+            except Exception:
+                # If formatting fails for any reason, fall back to the email
+                return self.email
         return self.email
     
     def get_full_name(self):

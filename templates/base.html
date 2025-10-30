@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,13 +107,7 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="nav-item ms-2">
-                        <!-- Theme toggle: persists in localStorage and updates data-theme on <html> -->
-                        <button id="themeToggleBtn" class="btn btn-sm btn-outline-light" aria-pressed="false" title="Toggle dark/light theme">
-                            <i id="themeToggleIcon" class="bi bi-moon-fill" aria-hidden="true"></i>
-                            <span class="visually-hidden">Toggle theme</span>
-                        </button>
-                    </li>
+                    <!-- Theme toggle removed: site fixed to light theme -->
                 </ul>
             </div>
         </div>
@@ -155,66 +149,7 @@
     <!-- Select2 JS for searchable dropdowns -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
-    <script>
-        // Theme toggle script: stores preference in localStorage and applies data-theme attribute
-        (function() {
-            const storageKey = 'ai_resume_theme';
-            const htmlEl = document.documentElement;
-            const btn = document.getElementById('themeToggleBtn');
-            const icon = document.getElementById('themeToggleIcon');
-
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    htmlEl.setAttribute('data-theme', 'dark');
-                    htmlEl.setAttribute('data-bs-theme', 'dark');
-                    document.body.classList.add('dark-theme');
-                    document.body.classList.remove('light-theme');
-                    if (icon) icon.className = 'bi bi-sun-fill';
-                    btn.setAttribute('aria-pressed', 'true');
-                } else {
-                    htmlEl.setAttribute('data-theme', 'light');
-                    htmlEl.setAttribute('data-bs-theme', 'light');
-                    document.body.classList.add('light-theme');
-                    document.body.classList.remove('dark-theme');
-                    if (icon) icon.className = 'bi bi-moon-fill';
-                    btn.setAttribute('aria-pressed', 'false');
-                }
-            }
-
-            // Initialize from localStorage or prefers-color-scheme
-            let theme = localStorage.getItem(storageKey);
-            if (!theme) {
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                theme = prefersDark ? 'dark' : 'light';
-            }
-            applyTheme(theme);
-
-            // Toggle handler
-            if (btn) {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const current = localStorage.getItem(storageKey) || (document.documentElement.getAttribute('data-theme') || 'light');
-                    const next = current === 'dark' ? 'light' : 'dark';
-                    localStorage.setItem(storageKey, next);
-                    applyTheme(next);
-                });
-            }
-
-            // Ensure fixed-top navbar doesn't overlap content (apply padding equal to navbar height)
-            function applyNavbarOffset() {
-                const nav = document.querySelector('.navbar.fixed-top');
-                const main = document.getElementById('mainContent');
-                if (nav && main) {
-                    const navHeight = nav.getBoundingClientRect().height;
-                    main.style.paddingTop = (navHeight + 12) + 'px';
-                }
-            }
-            window.addEventListener('resize', applyNavbarOffset);
-            document.addEventListener('DOMContentLoaded', applyNavbarOffset);
-            // Call immediately in case DOM already loaded
-            applyNavbarOffset();
-        })();
-    </script>
+    <!-- Theme toggle removed. Site defaults to light theme via html data attributes. -->
     {% block extra_js %}{% endblock %}
 </body>
 </html>

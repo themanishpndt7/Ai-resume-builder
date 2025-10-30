@@ -507,17 +507,7 @@ def portfolio_download_pdf(request):
     )
 
 
-@require_http_methods(["POST"])
-def set_theme(request):
-    """
-    Set user's theme preference (light/dark mode).
-    """
-    theme = request.POST.get('theme', 'light')
-    
-    response = JsonResponse({'success': True, 'theme': theme})
-    response.set_cookie('theme', theme, max_age=365*24*60*60)  # 1 year
-    
-    return response
+# Theme switching removed: site now uses fixed light theme and no server-side endpoint is needed.
 
 
 # ==================== COVER LETTER VIEWS ====================

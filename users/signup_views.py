@@ -3,7 +3,7 @@ Custom signup view to ensure proper database saving and error handling.
 """
 from allauth.account.views import SignupView as AllauthSignupView
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import IntegrityError, transaction
 import logging
 
@@ -25,21 +25,27 @@ class CustomSignupView(AllauthSignupView):
         try:
             # Use atomic transaction to ensure data integrity
             with transaction.atomic():
-                # Call parent's form_valid which creates the user
-                response = super().form_valid(form)
-                
+                # Create the user using the form save (this respects allauth hooks)
+                user = form.save(self.request)
+
                 # Log successful signup
-                user = self.user
                 logger.info(f"User successfully created: {user.email} (ID: {user.pk})")
-                
-                return response
-                
+
+                # If email verification is enabled, allauth will handle sending it.
+                # We redirect users to the login page with a success message so they can confirm their email.
+                messages.success(
+                    self.request,
+                    'Account created successfully. Please check your email for verification (if enabled) and log in.'
+                )
+
+                return redirect('account_login')
+
         except IntegrityError as e:
             # Handle duplicate email or username
             logger.warning(f"Signup IntegrityError: {str(e)}")
             
             if 'email' in str(e).lower():
-                form.add_error('email', 'An account with this email already exists.')
+                form.add_error('email', 'A user with this email already exists. Try logging in instead.')
             elif 'username' in str(e).lower():
                 form.add_error('username', 'This username is already taken.')
             else:

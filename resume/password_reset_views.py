@@ -71,9 +71,19 @@ class NewPasswordForm(forms.Form):
         
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords do not match!")
-        
-        if password1 and len(password1) < 8:
-            raise forms.ValidationError("Password must be at least 8 characters long!")
+        # Enforce stronger password rules: min 8 chars, uppercase, lowercase, number
+        if password1:
+            errors = []
+            if len(password1) < 8:
+                errors.append('be at least 8 characters')
+            if not any(c.isupper() for c in password1):
+                errors.append('include an uppercase letter')
+            if not any(c.islower() for c in password1):
+                errors.append('include a lowercase letter')
+            if not any(c.isdigit() for c in password1):
+                errors.append('include a number')
+            if errors:
+                raise forms.ValidationError('Password must ' + ', '.join(errors) + '.')
         
         return cleaned_data
 
@@ -167,10 +177,10 @@ AI Resume Builder Team
                     if getattr(settings, 'DEBUG', False):
                         request.session['password_reset_debug_otp'] = otp_code
                     # Store email in session so verify page and resend can use it
-                    messages.success(
-                        request, 
-                        f'OTP has been sent to {email}. Please check your inbox and spam folder. The OTP is valid for 10 minutes.'
-                    )
+                    request.session['password_reset_email'] = email
+                    request.session['password_reset_sent_at'] = timezone.now().isoformat()
+                    request.session['password_reset_just_sent'] = True
+                    messages.success(request, 'An OTP has been sent to your registered email address. Please check your inbox.')
                     return redirect('password_reset_verify_otp')
                     
                 except Exception as e:
@@ -185,18 +195,9 @@ AI Resume Builder Team
                     logger.error(f"Email Use TLS: {getattr(settings, 'EMAIL_USE_TLS', 'NOT SET')}")
                     
                     # Provide detailed error message for debugging
-                    if 'console' in settings.EMAIL_BACKEND.lower():
-                        messages.warning(
-                            request,
-                            'Email backend is set to console. Check server logs for the OTP code. '
-                            'Configure EMAIL_HOST_USER and EMAIL_HOST_PASSWORD in environment variables to send real emails.'
-                        )
-                    else:
-                        messages.error(
-                            request, 
-                            'Failed to send OTP email. Please ensure email credentials are configured correctly on Render. '
-                            f'Error: {type(e).__name__}. Contact support if this persists.'
-                        )
+                    # On any email send failure, show a simple red error message per spec
+                    logger.exception(f"Email send failure details: {e}")
+                    messages.error(request, 'Unable to send OTP. Please check your internet or try again later.')
                     return render(request, self.template_name, {'form': form})
                 
             except CustomUser.DoesNotExist:
@@ -290,13 +291,13 @@ class PasswordResetCombinedView(View):
                     # For local development: expose the OTP in session so developers can test flows
                     if getattr(settings, 'DEBUG', False):
                         request.session['password_reset_debug_otp'] = otp_code
-                    messages.success(request, f'OTP has been sent to {email}. Please check your inbox and spam folder.')
+                    messages.success(request, 'An OTP has been sent to your registered email address. Please check your inbox.')
                     return redirect('password_reset_verify_otp')
                 except CustomUser.DoesNotExist:
                     messages.error(request, 'No account found with this email address.')
                 except Exception as e:
                     logger.exception(f"❌ Error sending OTP in combined view: {str(e)}")
-                    messages.error(request, 'Failed to send OTP. Please try again later.')
+                    messages.error(request, 'Unable to send OTP. Please check your internet or try again later.')
 
             # If form invalid, render page with errors
             otp_form = OTPVerificationForm()
@@ -319,12 +320,22 @@ class PasswordResetCombinedView(View):
 
                     otp_obj = PasswordResetOTP.objects.filter(user=user, otp=otp, is_used=False).order_by('-created_at').first()
                     if otp_obj and otp_obj.is_valid():
+                        # Instead of redirecting, render the same page and show the new password form inline
                         request.session['reset_email'] = email
                         request.session['reset_otp'] = otp
                         request.session[session_key] = 0
                         messages.success(request, 'OTP verified successfully! Please set your new password.')
-                        # Redirect to the session-based confirm page
-                        return redirect('password_reset_confirm_simple')
+                        # Prepare forms for rendering: keep request/otp forms and show password form
+                        request_form = PasswordResetRequestForm()
+                        otp_form = OTPVerificationForm(initial={'email': email})
+                        new_password_form = NewPasswordForm(initial={'email': email, 'otp': otp})
+                        return render(request, self.template_name, {
+                            'request_form': request_form,
+                            'form': otp_form,
+                            'show_new_password': True,
+                            'new_password_form': new_password_form,
+                            'resend_cooldown_remaining': 0,
+                        })
                     else:
                         request.session[session_key] = attempts + 1
                         remaining = 5 - (attempts + 1)
@@ -337,6 +348,49 @@ class PasswordResetCombinedView(View):
             # Render page with errors
             request_form = PasswordResetRequestForm()
             return render(request, self.template_name, {'request_form': request_form, 'form': form})
+
+        elif 'set_new_password' in request.POST:
+            # Handle inline new password submission from the combined page
+            form = NewPasswordForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data.get('email')
+                otp = form.cleaned_data.get('otp')
+                password = form.cleaned_data.get('password1')
+                try:
+                    user = CustomUser.objects.get(email=email, is_active=True)
+
+                    otp_obj = PasswordResetOTP.objects.filter(
+                        user=user,
+                        otp=otp,
+                        is_used=False
+                    ).order_by('-created_at').first()
+
+                    if otp_obj and otp_obj.is_valid():
+                        user.set_password(password)
+                        user.save()
+
+                        otp_obj.is_used = True
+                        otp_obj.save()
+
+                        # Clear session reset flags
+                        request.session.pop('reset_email', None)
+                        request.session.pop('reset_otp', None)
+                        request.session.pop('password_reset_email', None)
+                        request.session.pop('password_reset_just_sent', None)
+
+                        messages.success(request, 'Password reset successful. Please login with your new password.')
+                        return redirect('account_login')
+                    else:
+                        messages.error(request, 'Invalid OTP. Please try again.')
+                        return redirect('password_reset_verify_otp')
+                except CustomUser.DoesNotExist:
+                    messages.error(request, 'Invalid user.')
+                    return redirect('password_reset_request')
+            else:
+                # Show form with errors inline
+                request_form = PasswordResetRequestForm()
+                otp_form = OTPVerificationForm(initial={'email': request.POST.get('email', '')})
+                return render(request, self.template_name, {'request_form': request_form, 'form': otp_form, 'show_new_password': True, 'new_password_form': form})
 
         # Unknown action: reload page
         return redirect('password_reset_verify_otp')

@@ -27,10 +27,10 @@
         <!-- Left Side - Information -->
         <div class="col-lg-5 mb-4 mb-lg-0">
             <div class="login-info-section animate-fade-in">
-                <h1 class="hero-title-login mb-4">
+                <h1 class="hero-title-login mb-4" style="color: #ffffff !important;">
                     <i class="bi bi-box-arrow-in-right"></i> Welcome Back!
                 </h1>
-                <p class="hero-subtitle-login mb-5">
+                <p class="hero-subtitle-login mb-5" style="color: #ffffff !important;">
                     Access your AI-powered resume builder and continue crafting your professional future
                 </p>
                 
@@ -40,8 +40,8 @@
                             <i class="bi bi-shield-check"></i>
                         </div>
                         <div>
-                            <h5 class="feature-title-login mb-2">Secure & Encrypted</h5>
-                            <p class="feature-desc-login mb-0">Your data is protected with enterprise-grade security</p>
+                            <h5 class="feature-title-login mb-2" style="color: #ffffff !important;">Secure & Encrypted</h5>
+                            <p class="feature-desc-login mb-0" style="color: #ffffff !important;">Your data is protected with enterprise-grade security</p>
                         </div>
                     </div>
                     
@@ -50,8 +50,8 @@
                             <i class="bi bi-robot"></i>
                         </div>
                         <div>
-                            <h5 class="feature-title-login mb-2">AI-Powered Tools</h5>
-                            <p class="feature-desc-login mb-0">Smart resume generation at your fingertips</p>
+                            <h5 class="feature-title-login mb-2" style="color: #ffffff !important;">AI-Powered Tools</h5>
+                            <p class="feature-desc-login mb-0" style="color: #ffffff !important;">Smart resume generation at your fingertips</p>
                         </div>
                     </div>
                     
@@ -60,8 +60,8 @@
                             <i class="bi bi-lightning-charge-fill"></i>
                         </div>
                         <div>
-                            <h5 class="feature-title-login mb-2">Instant Access</h5>
-                            <p class="feature-desc-login mb-0">Pick up exactly where you left off</p>
+                            <h5 class="feature-title-login mb-2" style="color: #ffffff !important;">Instant Access</h5>
+                            <p class="feature-desc-login mb-0" style="color: #ffffff !important;">Pick up exactly where you left off</p>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
             <div class="glass-card-login animate-slide-in">
                 <div class="card-header-login text-center py-4">
                     <h3 class="card-title-login mb-2"><i class="bi bi-box-arrow-in-right me-2"></i>Login to Your Account</h3>
-                    <p class="card-subtitle-login mb-0">Enter your credentials to continue your journey</p>
+                    <p class="card-subtitle-login mb-0" style="color: #ffffff !important;">Enter your credentials to continue your journey</p>
                 </div>
                 <div class="card-body-login p-4 p-md-5">
                     {% if messages %}
@@ -170,7 +170,7 @@
                     
                     <hr class="my-4">
                     
-                    <p class="text-center mb-0">
+                    <p class="text-center mb-0" style="color: #ffffff !important;">
                         Don't have an account? 
                         <a href="{% url 'account_signup' %}" class="fw-bold text-decoration-none create-account-btn">
                             Create one now <i class="bi bi-arrow-right"></i>
@@ -340,6 +340,21 @@ body.light-theme .feature-icon i {
     color: #111 !important;
     fill: #111 !important;
 }
+
+/* Force entry icons/logos in the login panel to be white for consistent contrast */
+.futuristic-login-container .input-group-text,
+.futuristic-login-container .input-group-text i,
+.futuristic-login-container .form-label i,
+.futuristic-login-container .feature-icon-3d-login i,
+.futuristic-login-container .bi,
+.futuristic-login-container .password-toggle-btn i,
+.futuristic-login-container .create-account-btn i {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Slightly adjust input-group background/border within login panel for contrast */
+.futuristic-login-container .input-group-text { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
 
 /* Hero Title & Subtitle */
 .hero-title-login {
@@ -1018,6 +1033,63 @@ body[data-theme='light'] input, body[data-theme='light'] label, body[data-theme=
         font-size: 1.2rem;
     }
 }
+
+/* FORCE: Make login page text white (override any light-theme rules) */
+.futuristic-login-container,
+.futuristic-login-container h1,
+.futuristic-login-container h2,
+.futuristic-login-container h3,
+.futuristic-login-container h4,
+.futuristic-login-container p,
+.futuristic-login-container label,
+.futuristic-login-container a,
+.futuristic-login-container small,
+.futuristic-login-container .form-label,
+.futuristic-login-container .form-text,
+.futuristic-login-container .text-muted,
+.futuristic-login-container .feature-desc-login,
+.futuristic-login-container .feature-title-login {
+    color: #ffffff !important;
+}
+
+.futuristic-login-container .form-control,
+.futuristic-login-container .form-select,
+.futuristic-login-container ::placeholder {
+    color: #ffffff !important;
+}
+
+.futuristic-login-container a {
+    color: var(--primary-color) !important;
+}
+
+/* Icon enhancements: colored backgrounds, subtle glow and lift on hover */
+.feature-icon-3d-login {
+    background: linear-gradient(135deg, rgba(0,212,255,0.18), rgba(123,44,191,0.18));
+    border: 1px solid rgba(0,212,255,0.12);
+    transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+
+.feature-icon-3d-login i,
+.feature-icon i,
+.icon-wrapper i {
+    color: #ffffff !important;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-block;
+    filter: drop-shadow(0 8px 18px rgba(0,212,255,0.12));
+}
+
+.feature-card-3d-login:hover .feature-icon-3d-login,
+.feature-item:hover .feature-icon {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 16px 40px rgba(0,212,255,0.12), 0 6px 18px rgba(123,44,191,0.08);
+    background: linear-gradient(135deg, rgba(0,212,255,0.32), rgba(123,44,191,0.28));
+}
+
+/* Colored accents per-icon (keeps structure simple and accessible) */
+.feature-card-3d-login:nth-child(1) .feature-icon-3d-login { background: linear-gradient(135deg,#06b6d4,#7b2cbf); }
+.feature-card-3d-login:nth-child(2) .feature-icon-3d-login { background: linear-gradient(135deg,#ff7ab6,#8b5cf6); }
+.feature-card-3d-login:nth-child(3) .feature-icon-3d-login { background: linear-gradient(135deg,#ffd166,#ff6b6b); }
 </style>
 
 <script>

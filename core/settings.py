@@ -104,7 +104,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'resume.context_processors.theme',
             ],
         },
     },
@@ -299,9 +298,7 @@ SERVER_EMAIL = os.getenv('SERVER_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else
 # OpenAI API Key (set in environment variables)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 
-# Theme settings
-THEME_COOKIE_NAME = 'theme'
-THEME_DEFAULT = 'light'
+# Theme settings removed: site fixed to light theme and theme toggle removed
 
 # Security settings (only in production)
 if not DEBUG:

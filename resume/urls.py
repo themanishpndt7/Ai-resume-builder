@@ -64,6 +64,4 @@ urlpatterns = [
     path('portfolio/', views.portfolio_view, name='portfolio_view'),
     path('portfolio/download/', views.portfolio_download_pdf, name='portfolio_download_pdf'),
     
-    # Theme
-    path('set-theme/', views.set_theme, name='set_theme'),
 ]

@@ -147,8 +147,8 @@
         <div class="col-lg-6">
             <div class="glass-card-signup animate-slide-in">
                 <div class="card-header-signup text-center py-4">
-                    <h3 class="card-title-signup mb-2"><i class="bi bi-person-plus-fill me-2"></i>Create Your Account</h3>
-                    <p class="card-subtitle-signup mb-0">Start building your professional future today</p>
+                    <h3 class="card-title-signup mb-2" style="color: #ffffff !important;"><i class="bi bi-person-plus-fill me-2"></i>Create Your Account</h3>
+                    <p class="card-subtitle-signup mb-0" style="color: #ffffff !important;">Start building your professional future today</p>
                 </div>
                 <div class="card-body-signup p-4 p-md-5">
                     {% if messages %}
@@ -190,7 +190,7 @@
                         </div>
                     {% endif %}
                     
-                    <form method="post" action="{% url 'account_signup' %}" id="signupForm">
+                    <form method="post" action="{% url 'account_signup' %}" id="signupForm" novalidate>
                         {% csrf_token %}
                         
                         <!-- First Name -->
@@ -332,7 +332,7 @@
                                 <i class="bi bi-envelope-check-fill"></i> Send Verification Code
                             </button>
                         </div>
-                        <p class="text-center text-muted small mt-2 mb-0 send-verification-note">
+                        <p class="text-center text-white small mt-2 mb-0 send-verification-note" style="color: #ffffff !important;">
                             <i class="bi bi-info-circle"></i> We'll send a verification code to your email
                         </p>
                     </form>
@@ -340,7 +340,7 @@
                     <hr class="my-4">
 
                     <p class="text-center mb-0 have-account-row">
-                        <span class="muted-text">Already have an account?</span>
+                        <span class="text-white" style="color: #ffffff !important;">Already have an account?</span>
                         <a href="{% url 'account_login' %}" class="have-account-cta" role="button" aria-label="Login to your account">
                             <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>
                             Login here
@@ -790,6 +790,103 @@ body[data-theme='light'] .feature-item p,
     color: #111 !important;
 }
 
+/* FORCE: Make signup page left-panel text white (override any light-theme rules) */
+.futuristic-signup-container,
+.futuristic-signup-container .hero-title-signup,
+.futuristic-signup-container .hero-subtitle-signup,
+.futuristic-signup-container .feature-item h5,
+.futuristic-signup-container .feature-item p,
+.futuristic-signup-container .feature-desc,
+.futuristic-signup-container .feature-more {
+    color: #ffffff !important;
+}
+
+.futuristic-signup-container .feature-icon .icon-wrapper i {
+    color: #ffffff !important;
+}
+
+.futuristic-signup-container .feature-item .text-muted {
+    color: #ffffff !important;
+}
+
+/* Icon/logo enhancements for signup page: colored icon wrappers and subtle glows */
+.icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.18), rgba(118,75,162,0.18));
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+
+.icon-wrapper i,
+.feature-icon i {
+    color: #ffffff !important;
+    font-size: 1.35rem;
+    filter: drop-shadow(0 8px 20px rgba(118,75,162,0.18));
+}
+
+.feature-item:hover .icon-wrapper {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 18px 48px rgba(102,126,234,0.12), 0 6px 20px rgba(118,75,162,0.08);
+    background: linear-gradient(135deg,#67d2ff,#8b5cf6);
+}
+
+/* Per-feature icon colors */
+.feature-item:nth-child(1) .icon-wrapper { background: linear-gradient(135deg,#00d4ff,#7b2cbf); }
+.feature-item:nth-child(2) .icon-wrapper { background: linear-gradient(135deg,#ff9ab3,#8b5cf6); }
+.feature-item:nth-child(3) .icon-wrapper { background: linear-gradient(135deg,#ffd166,#ff6b6b); }
+.feature-item:nth-child(4) .icon-wrapper { background: linear-gradient(135deg,#6ee7b7,#34d399); }
+
+/* Signup page additional overrides: TOS label, verification note, already-have-account prompt, placeholders, and links */
+.futuristic-signup-container .form-check-label,
+.futuristic-signup-container .tos-label,
+.futuristic-signup-container .terms-label {
+    color: #ffffff !important;
+}
+.futuristic-signup-container .form-check-label a,
+.futuristic-signup-container .tos-label a,
+.futuristic-signup-container .terms-label a {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+.futuristic-signup-container .form-text,
+.futuristic-signup-container .verification-note,
+.futuristic-signup-container .verification-help {
+    color: #ffffff !important;
+}
+.futuristic-signup-container .already-account,
+.futuristic-signup-container .have-account,
+.futuristic-signup-container .account-prompt,
+.futuristic-signup-container .text-muted.account-prompt {
+    color: #ffffff !important;
+}
+.futuristic-signup-container input::placeholder,
+.futuristic-signup-container textarea::placeholder {
+    color: rgba(255,255,255,0.72) !important;
+}
+.futuristic-signup-container a {
+    color: #ffffff !important;
+}
+
+/* Force entry icons/logos in the signup panel to be white for consistent contrast */
+.futuristic-signup-container .input-group-text,
+.futuristic-signup-container .input-group-text i,
+.futuristic-signup-container .form-label i,
+.futuristic-signup-container .feature-icon i,
+.futuristic-signup-container .bi,
+.futuristic-signup-container .have-account-cta i,
+.futuristic-signup-container .password-toggle-btn i {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+/* Narrow scope: don't force all .bi globally, only within signup container */
+.futuristic-signup-container .input-group-text { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); }
+
 /* Autofill styling */
 .form-control:-webkit-autofill,
 .form-control:-webkit-autofill:hover,
@@ -969,6 +1066,12 @@ body[data-theme='light'] .feature-desc {
     border-radius: 10px;
 }
 
+/* Make the "Password Strength:" heading red and bold (scoped to signup page) */
+.futuristic-signup-container .password-strength small.text-muted {
+    color: #ff4d4f !important; /* red */
+    font-weight: 700 !important;
+}
+
 .strength-text {
     font-size: 0.875rem;
     font-weight: 600;
@@ -1009,21 +1112,71 @@ body[data-theme='light'] .feature-desc {
     transition: background-color 260ms ease, color 260ms ease, transform 200ms ease;
 }
 .strength-text.very-weak { background: rgba(220,53,69,0.12); color: #dc3545; }
-.strength-text.weak { background: rgba(220,53,69,0.12); color: #dc3545; }
-.strength-text.fair { background: rgba(255,193,7,0.12); color: #ffc107; }
-.strength-text.good { background: rgba(40,167,69,0.10); color: #28a745; }
-.strength-text.strong { 
-    background: linear-gradient(90deg, rgba(34,197,94,0.15), rgba(16,185,129,0.18));
-    color: #ffffff; 
-    font-weight: 900; 
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 24px rgba(16,185,129,0.18), inset 0 -2px 8px rgba(0,0,0,0.12);
+.futuristic-signup-container .strength-text.very-weak {
+    background: linear-gradient(90deg,#a50f15,#dc3545) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 30px rgba(165,15,21,0.18) !important;
+    animation: pulse-very-weak 900ms ease-in-out infinite;
 }
 
-/* Strong progress bar visual */
-.password-strength .progress-bar.progress-strong {
-    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
-    box-shadow: 0 8px 30px rgba(34,197,94,0.22);
+.futuristic-signup-container .strength-text.weak {
+    background: linear-gradient(90deg,#e05547,#ff6b6b) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow: 0 8px 26px rgba(224,85,71,0.12) !important;
+    animation: pulse-weak 1200ms ease-in-out infinite;
+}
+
+.futuristic-signup-container .strength-text.fair {
+    background: linear-gradient(90deg,#f6c844,#f59e0b) !important; /* amber */
+    color: #08121a !important; /* dark text for contrast against amber */
+    font-weight: 700 !important;
+    box-shadow: 0 8px 20px rgba(245,158,11,0.12) !important;
+}
+
+.futuristic-signup-container .strength-text.good {
+    background: linear-gradient(90deg,#34d399,#10b981) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 8px 30px rgba(34,197,94,0.16) !important;
+}
+
+.futuristic-signup-container .strength-text.strong {
+    background: linear-gradient(90deg,#10b981,#059669) !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    box-shadow: 0 10px 40px rgba(16,185,129,0.22) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* Progress bar styles for each status (scoped) */
+.futuristic-signup-container .password-strength .progress-bar.progress-very-weak {
+    background: linear-gradient(90deg,#8b0a0f,#dc3545) !important;
+}
+.futuristic-signup-container .password-strength .progress-bar.progress-weak {
+    background: linear-gradient(90deg,#e05547,#ff6b6b) !important;
+}
+.futuristic-signup-container .password-strength .progress-bar.progress-fair {
+    background: linear-gradient(90deg,#f6c844,#f59e0b) !important;
+}
+.futuristic-signup-container .password-strength .progress-bar.progress-good {
+    background: linear-gradient(90deg,#34d399,#10b981) !important;
+}
+.futuristic-signup-container .password-strength .progress-bar.progress-strong {
+    background: linear-gradient(90deg,#22c55e,#16a34a) !important;
+}
+
+/* Small pulse/glow animations */
+@keyframes pulse-very-weak {
+    0% { transform: translateY(0) scale(1); filter: brightness(1); }
+    50% { transform: translateY(-1px) scale(1.01); filter: brightness(1.06); }
+    100% { transform: translateY(0) scale(1); filter: brightness(1); }
+}
+@keyframes pulse-weak {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-2px) scale(1.02); }
+    100% { transform: translateY(0) scale(1); }
 }
 
 /* When all requirements are met, add a celebratory pulse to each requirement briefly */
@@ -1031,10 +1184,18 @@ body[data-theme='light'] .feature-desc {
     transform: translateY(-2px) scale(1.02);
 }
 
-/* Met/unmet requirement styles */
-.password-requirements li.met { color: #28a745 !important; }
+/* Met/unmet requirement styles: satisfied requirements stay white with green icon; unmet requirements are red */
+.password-requirements li { color: #ffffff !important; }
+.password-requirements li i { color: rgba(255,255,255,0.85) !important; }
+.password-requirements li.met { color: #ffffff !important; }
 .password-requirements li.met i { color: #28a745 !important; }
-.password-requirements li:not(.met) { color: #6c757d !important; }
+.password-requirements li:not(.met) { color: #ff4d4f !important; }
+.password-requirements li:not(.met) i { color: #ff4d4f !important; }
+
+/* Password match feedback (confirm password) should be red when passwords don't match */
+#password-match-feedback {
+    color: #ff4d4f !important;
+}
 
 .password-strength .progress { background: rgba(255,255,255,0.06); }
 .password-strength .progress-bar { transition: width 360ms ease, background-color 260ms ease; }
@@ -1578,6 +1739,17 @@ body.light-theme .have-account-row .muted-text {
     .feature-item h5 {
         font-size: 1rem;
     }
+}
+
+/* FORCE: Make signup form labels and placeholders white */
+#signupForm label.form-label {
+    color: #ffffff !important;
+}
+#signupForm .form-control {
+    color: #ffffff !important;
+}
+#signupForm .form-control::placeholder {
+    color: rgba(255,255,255,0.55) !important;
 }
 </style>
 

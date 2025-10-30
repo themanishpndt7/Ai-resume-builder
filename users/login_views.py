@@ -10,6 +10,8 @@ from allauth.account.views import LoginView as AllauthLoginView
 from allauth.account.utils import perform_login
 from allauth.exceptions import ImmediateHttpResponse
 import logging
+from django.forms.forms import NON_FIELD_ERRORS
+from django.forms.utils import ErrorList
 
 logger = logging.getLogger(__name__)
 
@@ -85,13 +87,22 @@ class CustomLoginView(AllauthLoginView):
                 logger.warning(f"Login form validation errors: {form.errors}")
                 
                 # Add a single user-friendly error message if not already present
-                storage = messages.get_messages(self.request)
-                existing_messages = [m.message for m in storage]
-                storage.used = False  # Mark messages as not used so they display
-                
-                error_msg = 'Invalid email or password. Please check your credentials and try again.'
-                if error_msg not in existing_messages:
-                    messages.error(self.request, error_msg)
+                # Normalize non-field errors to a single friendly message so the
+                # template doesn't show the allauth default and a separate messages
+                # framework message (which looked duplicated/confusing).
+                friendly = (
+                    'Incorrect email or password. Please try again, or use "Forgot password" to reset your password.'
+                )
+
+                # Replace any non-field errors with the friendly message
+                if form.non_field_errors():
+                    form._errors[NON_FIELD_ERRORS] = ErrorList([friendly])
+
+                # Note: we intentionally do NOT duplicate the friendly message in
+                # the messages framework here because the template already shows
+                # non-field form errors in a dedicated alert block. Keeping the
+                # error only in `form.non_field_errors` avoids the same message
+                # appearing twice on the page.
             
             return super().form_invalid(form)
             

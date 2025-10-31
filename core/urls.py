@@ -52,19 +52,8 @@ urlpatterns = [
     path('accounts/delete/', delete_account, name='delete_account'),
     path('accounts/delete/confirm/', DeleteAccountView.as_view(), name='delete_account_confirm'),
     
-    # Custom OTP-based password reset (must be before allauth)
-    # Combined password reset & verify page
-    path('accounts/password/reset/', PasswordResetCombinedView.as_view(), name='password_reset_request'),
-    # Keep the verify route for compatibility but redirect it to the main combined reset page
-    path('accounts/password/reset/verify/', RedirectView.as_view(pattern_name='password_reset_request', permanent=False), name='password_reset_verify_otp'),
-    path('accounts/password/reset/resend/', ResendPasswordResetOTPView.as_view(), name='resend_password_reset_otp'),
-    path('accounts/password/reset/clear-just-sent/', ClearPasswordResetJustSentView.as_view(), name='password_reset_clear_just_sent'),
-    # Keep a URL that accepts uid/token for compatibility with libraries that build token links
-    path('accounts/password/reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    # Simpler confirm path used by our OTP flow (session-based). Named differently to avoid clash.
-    path('accounts/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password_reset_confirm_simple'),
-    path('accounts/password/reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('accounts/password/reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    # Delegate password-reset related routes to the accounts app (keeps routing centralized)
+    path('accounts/', include('accounts.urls')),
     
     # Allauth URLs (our custom views will override)
     path('accounts/', include('allauth.urls')),

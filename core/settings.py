@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 # Load environment variables
 load_dotenv()
@@ -25,31 +26,50 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-pu3b0yc&ibluwssn3k)x9l2h5!7d=oqq%8b%9d2ajb$wx_7oqg')
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+# Default to False unless DEBUG env is explicitly 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Parse ALLOWED_HOSTS from environment variable
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')]
+# SECURITY WARNING: keep the secret key used in production secret!
+# Read SECRET_KEY from env. In production (DEBUG=False) require it; in DEBUG generate one for convenience.
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        # Local development fallback: generate a random key to avoid crashes
+        from django.core.management.utils import get_random_secret_key
+        SECRET_KEY = get_random_secret_key()
+        print("⚠️ Using generated SECRET_KEY for development only")
+    else:
+        # In production we must have a SECRET_KEY set via environment
+        raise ImproperlyConfigured("SECRET_KEY environment variable is required in production")
 
-# Add Render.com domain if present
-RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# Explicit ALLOWED_HOSTS for Render and local dev
+# If Render provides an ALLOWED_HOSTS env var, respect it (comma-separated)
+env_allowed = os.getenv('ALLOWED_HOSTS')
+if env_allowed:
+    ALLOWED_HOSTS = [h.strip() for h in env_allowed.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = [
+        os.getenv('RENDER_EXTERNAL_HOSTNAME', 'ai-resume-builder-6jan.onrender.com'),
+        '127.0.0.1',
+        'localhost',
+    ]
 
-# CSRF trusted origins for proxy access
+# CSRF trusted origins: include Render domain and wildcard for onrender.com
 CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:36931',
-    'http://localhost:36931',
+    'https://ai-resume-builder-6jan.onrender.com',
+    'https://*.onrender.com',
+    # Keep local dev entries for development convenience
     'http://127.0.0.1:8000',
     'http://localhost:8000',
 ]
 
-# Add production domain to CSRF trusted origins
-if RENDER_EXTERNAL_HOSTNAME:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+# Allow adding the RENDER_EXTERNAL_HOSTNAME dynamically if provided
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    if f'https://{RENDER_EXTERNAL_HOSTNAME}' not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 # Custom CSRF failure view
 CSRF_FAILURE_VIEW = 'users.csrf_views.csrf_failure'
@@ -129,14 +149,38 @@ if os.getenv('POSTGRES_DB') or os.getenv('DB_NAME'):
         }
     }
 elif 'DATABASE_URL' in os.environ:
-    # Allow DATABASE_URL (e.g., Heroku / Render) to override
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    # Allow DATABASE_URL (e.g., Render) to override
+    # Use dj_database_url to parse and enable ssl for Render
+    db_url = os.environ.get('DATABASE_URL', '') or ''
+    db_url = db_url.strip()
+    if db_url:
+        try:
+            DATABASES = {
+                'default': dj_database_url.config(
+                    default=db_url,
+                    conn_max_age=600,
+                    conn_health_checks=True,
+                    ssl_require=True,  # Enforce SSL for Render Postgres
+                )
+            }
+        except Exception as e:
+            # If the DATABASE_URL is malformed, log a clear message and fall back to sqlite for safety
+            print('ERROR: Invalid DATABASE_URL provided; falling back to sqlite. Fix DATABASE_URL in environment. Error:', str(e))
+            DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': BASE_DIR / 'db.sqlite3',
+                }
+            }
+    else:
+        # Empty string present as DATABASE_URL; fallback to sqlite and inform operator
+        print('WARNING: DATABASE_URL environment variable is set but empty - using sqlite fallback')
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
     DATABASES = {
         'default': {
@@ -204,9 +248,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Cloudinary Configuration for persistent media storage
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', ''),
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dud3f00ay'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '764652939378289'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'gu7Rwmz8jB4I0vsI3VYZNC3Ri0Q'),
 }
 
 # Use Cloudinary for media storage if credentials are provided
@@ -276,24 +320,23 @@ CSRF_USE_SESSIONS = False  # Store CSRF token in cookie, not session
 CSRF_COOKIE_AGE = 31449600  # 1 year
 
 # Email settings
-# Check if email credentials are configured
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+# Use environment variables with Render-friendly defaults (Gmail SMTP)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'mpandat0052@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'ehaw vyzx zrgc ngws')
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 
-# Use SMTP if credentials are provided, otherwise use console backend
-if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-    print("✅ Email configured: Real emails will be sent via SMTP")
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    print("⚠️  Email not configured: Emails will be printed to console")
-    print("   Set EMAIL_HOST_USER and EMAIL_HOST_PASSWORD to send real emails")
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'AI Resume Builder <mpandat0052@gmail.com>')
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', 'AI Resume Builder <mpandat0052@gmail.com>')
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'noreply@airesume.com')
-SERVER_EMAIL = os.getenv('SERVER_EMAIL', EMAIL_HOST_USER if EMAIL_HOST_USER else 'server@airesume.com')
+if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
+    # Log email configuration state
+    if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+        print("✅ Email configured: Real emails will be sent via SMTP")
+    else:
+        print("⚠️ Email backend is SMTP but EMAIL_HOST_USER or PASSWORD are empty")
 
 # OpenAI API Key (set in environment variables)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
